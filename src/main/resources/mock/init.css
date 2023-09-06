@@ -35,3 +35,6 @@ td.nodata{
 #calendar td.nholiday{
 	background-color: #ffcccc;
 }
+.inputhours{
+    width:40px;
+}
