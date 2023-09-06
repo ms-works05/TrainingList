@@ -1,3 +1,4 @@
+/* ----- 訓練時間表 ----- */
 /* 曜日行 */
 tr.row_dow{
 /* 	height: 20px; */
@@ -27,3 +28,10 @@ td.nodata{
 	background-color: #ff0000; 
 }
 
+/* ----- スケジュール情報 ----- */
+#calendar td.holiday{
+	background-color: #dddddd;
+}
+#calendar td.nholiday{
+	background-color: #ffcccc;
+}
