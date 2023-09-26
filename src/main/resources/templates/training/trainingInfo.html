@@ -8,55 +8,83 @@
 		<br>
 		<h2>訓練情報</h2>
 		<br>
-		<div class="row">
-			<div class="col-md">
-				<form>
-					<div class="input-group mb-3">
-						<span class="input-group-text">ID</span>
-						<input type="text" class="form-control" value="00001" disabled>
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">訓練名</span>
-						<input type="text" class="form-control" placeholder="〇〇〇初級科" />
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">募集期間</span>
-						<input type="date" class="form-control" />　～　
-						<input type="date" class="form-control" />
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">選考日</span>
-						<input type="date" class="form-control" />
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">合格発表</span>
-						<input type="date" class="form-control" />
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">訓練期間</span>
-						<input type="date" class="form-control" />　～　
-						<input type="date" class="form-control" />
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">授業時間</span>
-						<input type="time" class="form-control" />　～　
-						<input type="time" class="form-control" />
-					</div>
-					<div class="input-group mb-3">
-						<span class="input-group-text">授業時間数</span>
-						<input type="number" class="form-control" min="0" max="8" />
-					</div>
-				</form>
+<!--		<div th:if="${validationError}" th:each="error : ${validationError}">-->
+<!--			<label class="text-danger" th:text="${error}"></label>-->
+<!--		</div>-->
+		<form th:action="@{/training/create}" th:object="${trainingRequest}" th:method="post">
+			<div class="input-group mb-3" hidden>
+				<span class="input-group-text">ID</span>
+				<input type="text" class="form-control" th:field="*{id}" />
 			</div>
-		</div>
-		<br>
-		<div class="row center-block text-center">
-			<div class="col-18">
-<!--				<input type="submit" value="　登録　" class="btn btn-primary btn-block">-->
-				<a href="/training/list" class="btn btn-primary btn-block">　登録　</a>
+			<div class="text-danger" th:if="${#fields.hasErrors('trainingname')}" th:errors="*{trainingname}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">訓練名</span>
+				<input type="text" class="form-control" th:field="*{trainingname}" />
+			</div>
+			<div class="text-danger" th:if="${#fields.hasErrors('recruit_start_date')}" th:errors="*{recruit_start_date}"></div>
+			<div class="text-danger" th:if="${#fields.hasErrors('recruit_end_date')}" th:errors="*{recruit_end_date}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">募集期間</span>
+				<input type="date" class="form-control" name="recruit_start_date" th:value="*{recruit_start_date}" />　～　
+				<input type="date" class="form-control" name="recruit_end_date" th:value="*{recruit_end_date}" />
+			</div>
+			<div class="text-danger" th:if="${#fields.hasErrors('selection_date')}" th:errors="*{selection_date}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">選考日</span>
+				<input type="date" class="form-control" name="selection_date" th:value="*{selection_date}" />
+			</div>
+			<div class="text-danger" th:if="${#fields.hasErrors('acceptance_date')}" th:errors="*{acceptance_date}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">合格発表</span>
+				<input type="date" class="form-control" name="acceptance_date" th:value="*{acceptance_date}" />
+			</div>
+			<div class="text-danger" th:if="${#fields.hasErrors('start_date')}" th:errors="*{start_date}"></div>
+			<div class="text-danger" th:if="${#fields.hasErrors('end_date')}" th:errors="*{end_date}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">訓練期間</span>
+				<input type="date" class="form-control" name="start_date" th:value="*{start_date}" />　～　
+				<input type="date" class="form-control" name="end_date" th:value="*{end_date}" />
+			</div>
+			<div class="text-danger" th:if="${#fields.hasErrors('start_time')}" th:errors="*{start_time}"></div>
+			<div class="text-danger" th:if="${#fields.hasErrors('end_time')}" th:errors="*{end_time}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">授業時間</span>
+				<input type="time" list="data-list" min="09:00" max="12:00" class="form-control" name="start_time" th:value="*{start_time}" />　～　
+				<input type="time" list="data-list" min="12:00" max="18:00" class="form-control" name="end_time" th:value="*{end_time}" />
+			</div>
+			<div class="text-danger" th:if="${#fields.hasErrors('training_hours')}" th:errors="*{training_hours}"></div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">授業時間数</span>
+				<input type="number" class="form-control" min="1" max="8" name="training_hours" th:value="*{training_hours}" />
+			</div>
+			<br>
+			<div class="text-center">
+				<input type="submit" value="　登録　" class="btn btn-primary btn-block">
+<!--				<a href="/training/list" class="btn btn-primary btn-block">　登録　</a>-->
 				<a href="/training/list" class="btn btn-outline-primary btn-block">キャンセル</a>
 			</div>
-		</div>
+		</form>
     </div>
+	<datalist id="data-list">
+		<option value="09:00"></option>
+		<option value="09:30"></option>
+		<option value="10:00"></option>
+		<option value="10:30"></option>
+		<option value="11:00"></option>
+		<option value="11:30"></option>
+		<option value="12:00"></option>
+		<option value="12:30"></option>
+		<option value="13:00"></option>
+		<option value="13:30"></option>
+		<option value="14:00"></option>
+		<option value="14:30"></option>
+		<option value="15:00"></option>
+		<option value="15:30"></option>
+		<option value="16:00"></option>
+		<option value="16:30"></option>
+		<option value="17:00"></option>
+		<option value="17:30"></option>
+		<option value="18:00"></option>
+	</datalist>
 </body>
 </html>
