@@ -28,7 +28,8 @@ public class TrainingService {
      * @return 検索結果
      */
     public List<TrainingList> searchAll() {
-        return trainingRepository.findAll();
+
+        return trainingRepository.searchAll(false);
     }
     public TrainingList findById(Long id){
         Optional<TrainingList> exam = this.trainingRepository.findById(id);
@@ -59,5 +60,17 @@ public class TrainingService {
 
         TrainingList out = trainingRepository.save(entity);
 
+    }
+
+    /**
+     * 訓練情報 削除(論理削除)
+     * @param id id
+     */
+    public void deleteTraining(Long id){
+        TrainingList entity = findById(id);
+        // 削除フラグ設定
+        entity.setDeleteflg(true);
+
+        TrainingList out = trainingRepository.save(entity);
     }
 }

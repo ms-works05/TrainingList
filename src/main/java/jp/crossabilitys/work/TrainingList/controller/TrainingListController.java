@@ -54,7 +54,7 @@ public class TrainingListController {
      * @return 訓練一覧画面/訓練情報画面
      */
     @RequestMapping(value = "/training/create", method = RequestMethod.POST)
-    public String createTrainingInfo(Model model, @Validated @ModelAttribute TrainingRequest trainingRequest, BindingResult result,
+    public String registTrainingInfo(Model model, @Validated @ModelAttribute TrainingRequest trainingRequest, BindingResult result,
                                      RedirectAttributes redirectAttributes){
         if(result.hasErrors()){
             // 入力チェックエラーの場合
@@ -81,12 +81,11 @@ public class TrainingListController {
      * @return 訓練情報登録画面
      */
     @GetMapping("/training/update/{trainingId}")
-    public String trainingUpdate(Model model, @PathVariable("trainingId") Long id) {
+    public String displayTrainingUpdate(Model model, @PathVariable("trainingId") Long id) {
         TrainingList entity = trainingService.findById(id);
         TrainingRequest request = new TrainingRequest();
 
-        request.setId(entity.getId());
-
+        request.setId(entity.getId());                                  // ID
         request.setTrainingname(entity.getTrainingname());              // 訓練名
         request.setRecruit_start_date(entity.getRecruit_start_date());	// 募集開始日
         request.setRecruit_end_date(entity.getRecruit_end_date());		// 募集終了日
@@ -98,7 +97,7 @@ public class TrainingListController {
         request.setEnd_time(entity.getEnd_time());						// 授業終了時間
         request.setTraining_hours(entity.getTraining_hours());			// 授業時間数
         request.setTotaltraining_hours(entity.getTotaltraining_hours());// 総授業時間数
-        request.setDeleteflg(entity.isDeleteflg());                     // 削除フラグ													// 削除フラグ
+        request.setDeleteflg(entity.isDeleteflg());                     // 削除フラグ
 
         model.addAttribute("trainingRequest", request);
 
@@ -112,8 +111,10 @@ public class TrainingListController {
      * @return 訓練情報一覧画面
      */
     @GetMapping("/training/delete/{trainingId}")
-    public String trainingDelete(Model model, @PathVariable("trainingId") Long id){
-        // 仮
-        return "training/traininglist";
+    public String deleteTrainingInfo(Model model, @PathVariable("trainingId") Long id){
+        // 訓練情報の登録(削除フラグ=true)
+        trainingService.deleteTraining(id);
+
+        return "redirect:/training/list";
     }
 }
