@@ -19,7 +19,7 @@
         </thead>
         <tbody>
         <tr th:each="training : ${traininglist}"  th:object="${training}">
-            <td th:text="*{id}"></td>
+            <td th:text="*{id}" hidden></td>
             <td th:text="*{trainingname}"></td>
             <td th:text="*{#temporals.format(start_date, 'yyyy/MM/dd(eee)')} + ' ～ ' + *{#temporals.format(end_date, 'yyyy/MM/dd(eee)')}"></td>
             <td>

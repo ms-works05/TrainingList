@@ -2,6 +2,8 @@ package jp.crossabilitys.work.TrainingList.Entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +20,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @Table(name = "TRAININGLIST")
 public class TrainingList extends CommonEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;                // ID(主キー自動採番)
 
     @NotBlank
@@ -54,4 +56,9 @@ public class TrainingList extends CommonEntity {
     private int totaltraining_hours;        // 総授業時間数
 
     private boolean deleteflg;              // 削除フラグ
+
+    @OneToMany(targetEntity = jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule.class,
+            cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true, mappedBy = "trainingList")
+    private List<TrainingSchedule> trainingSchedule = new ArrayList<>();
+
 }

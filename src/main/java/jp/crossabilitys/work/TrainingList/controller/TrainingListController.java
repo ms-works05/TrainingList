@@ -58,14 +58,9 @@ public class TrainingListController {
                                      RedirectAttributes redirectAttributes){
         if(result.hasErrors()){
             // 入力チェックエラーの場合
-//            List<String> errorList = new ArrayList<>();
-//            for (ObjectError error : result.getAllErrors()){
-//                errorList.add(error.getDefaultMessage());
-//            }
-//            model.addAttribute("validationError", errorList);
-            // 訓練情報画面表示
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.trainingRequest", result);
             redirectAttributes.addFlashAttribute("trainingRequest", trainingRequest);
+            // 訓練情報画面表示
             return "training/traininginfo";
         }
         // 訓練情報の登録
