@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * 訓練情報 Entity
