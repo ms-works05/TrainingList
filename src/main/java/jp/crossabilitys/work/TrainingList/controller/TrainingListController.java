@@ -1,16 +1,14 @@
 package jp.crossabilitys.work.TrainingList.controller;
 
-import jp.crossabilitys.work.TrainingList.Entity.TrainingList;
+import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,7 +28,7 @@ public class TrainingListController {
      */
     @GetMapping("/training/list")
     public String displayTrainingList(Model model) {
-        List<TrainingList> traininglist = trainingService.searchAll();
+        List<TrainingInfo> traininglist = trainingService.searchAll();
         model.addAttribute("traininglist", traininglist);
         return "training/traininglist";
     }
@@ -77,22 +75,22 @@ public class TrainingListController {
      */
     @GetMapping("/training/update/{trainingId}")
     public String displayTrainingUpdate(Model model, @PathVariable("trainingId") Long id) {
-        TrainingList entity = trainingService.findById(id);
+        TrainingInfo entity = trainingService.findById(id);
         TrainingRequest request = new TrainingRequest();
 
-        request.setId(entity.getId());                                  // ID
-        request.setTrainingname(entity.getTrainingname());              // 訓練名
-        request.setRecruit_start_date(entity.getRecruit_start_date());	// 募集開始日
-        request.setRecruit_end_date(entity.getRecruit_end_date());		// 募集終了日
-        request.setSelection_date(entity.getSelection_date());			// 選考日
-        request.setAcceptance_date(entity.getAcceptance_date());		// 合格発表日
-        request.setStart_date(entity.getStart_date());					// 訓練開始日
-        request.setEnd_date(entity.getEnd_date());						// 訓練終了日
-        request.setStart_time(entity.getStart_time());					// 授業開始時間
-        request.setEnd_time(entity.getEnd_time());						// 授業終了時間
-        request.setTraining_hours(entity.getTraining_hours());			// 授業時間数
-        request.setTotaltraining_hours(entity.getTotaltraining_hours());// 総授業時間数
-        request.setDeleteflg(entity.isDeleteflg());                     // 削除フラグ
+        request.setId(entity.getId());
+        request.setTrainingname(entity.getTrainingname());
+        request.setRecruit_start_date(entity.getRecruit_start_date());
+        request.setRecruit_end_date(entity.getRecruit_end_date());
+        request.setSelection_date(entity.getSelection_date());
+        request.setAcceptance_date(entity.getAcceptance_date());
+        request.setStart_date(entity.getStart_date());
+        request.setEnd_date(entity.getEnd_date());
+        request.setStart_time(entity.getStart_time());
+        request.setEnd_time(entity.getEnd_time());
+        request.setTraining_hours(entity.getTraining_hours());
+        request.setTotaltraining_hours(entity.getTotaltraining_hours());
+        request.setDeleteflg(entity.isDeleteflg());
 
         model.addAttribute("trainingRequest", request);
 
@@ -111,5 +109,13 @@ public class TrainingListController {
         trainingService.deleteTraining(id);
 
         return "redirect:/training/list";
+    }
+    @GetMapping("/training/timetable/{trainingId}")
+    public String displayTimetable(Model model, @PathVariable("trainingId") Long id){
+        // 仮
+        TrainingInfo timetable = trainingService.findById(id);
+        model.addAttribute("timetable", timetable);
+
+        return "training/timetable";
     }
 }

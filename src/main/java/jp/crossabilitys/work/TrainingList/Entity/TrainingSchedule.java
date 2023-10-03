@@ -18,7 +18,6 @@ TrainingSchedule extends CommonEntity {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;                    // ID(主キー)
 
-//    @Id
     @Temporal(TemporalType.DATE)
     private LocalDate training_date;    // 訓練日
 
@@ -30,9 +29,9 @@ TrainingSchedule extends CommonEntity {
     private Long teacher_id;            // 講師ID
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "TRAININGLIST_ID", nullable = false)
+    @JoinColumn(name = "TRAININGINFO_ID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private TrainingList trainingList;
+    private TrainingInfo trainingInfo;
 
 }

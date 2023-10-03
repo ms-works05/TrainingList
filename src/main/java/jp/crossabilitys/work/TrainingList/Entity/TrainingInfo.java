@@ -16,8 +16,8 @@ import lombok.Data;
  */
 @Entity
 @Data
-@Table(name = "TRAININGLIST")
-public class TrainingList extends CommonEntity {
+@Table(name = "TRAININGINFO")
+public class TrainingInfo extends CommonEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;                // ID(主キー自動採番)
@@ -57,7 +57,8 @@ public class TrainingList extends CommonEntity {
     private boolean deleteflg;              // 削除フラグ
 
     @OneToMany(targetEntity = jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule.class,
-            cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true, mappedBy = "trainingList")
+            cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true, mappedBy = "trainingInfo")
+    @OrderBy(value = "training_date asc")
     private List<TrainingSchedule> trainingSchedule = new ArrayList<>();
 
 }

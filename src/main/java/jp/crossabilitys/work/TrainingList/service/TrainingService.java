@@ -1,18 +1,14 @@
 package jp.crossabilitys.work.TrainingList.service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
-import jp.crossabilitys.work.TrainingList.dto.TrainingScheduleRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import jp.crossabilitys.work.TrainingList.Entity.TrainingList;
+import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
 import jp.crossabilitys.work.TrainingList.repository.TrainingRepository;
 
@@ -31,55 +27,57 @@ public class TrainingService {
      * 訓練情報 全検索
      * @return 検索結果
      */
-    public List<TrainingList> searchAll() {
-
+    public List<TrainingInfo> searchAll() {
         return trainingRepository.searchAll(false);
     }
-    public TrainingList findById(Long id){
-        Optional<TrainingList> exam = this.trainingRepository.findById(id);
-        return exam.orElseThrow();
+
+    /**
+     * 訓練情報 ID検索
+     * @param id ID
+     * @return 検索結果
+     */
+    public TrainingInfo findById(Long id){
+        Optional<TrainingInfo> eList = this.trainingRepository.findById(id);
+        return eList.orElseThrow();
     }
     /**
-     * 訓練情報 新規登録
+     * 訓練情報 登録
      * @param request
      */
     public void registTraining(TrainingRequest request) {
-        TrainingList entity = new TrainingList();
+        TrainingInfo eList = new TrainingInfo();
 
         // 値保持
         LocalDate startDate = request.getStart_date();      // 訓練期間
         LocalDate endDate = request.getEnd_date();
         int trainingHours = request.getTraining_hours();    // 訓練時間数
 
-
         // 更新の場合
         if (request.getId()!=0){
-            entity.setId(request.getId());
+            eList.setId(request.getId());
             //訓練スケジュール削除
-            entity.getTrainingSchedule().clear();
-            trainingRepository.save(entity);
+            eList.getTrainingSchedule().clear();
+            trainingRepository.save(eList);
         }
-        entity.setTrainingname(request.getTrainingname());              // 訓練名
-        entity.setRecruit_start_date(request.getRecruit_start_date());	// 募集開始日
-        entity.setRecruit_end_date(request.getRecruit_end_date());		// 募集終了日
-        entity.setSelection_date(request.getSelection_date());			// 選考日
-        entity.setAcceptance_date(request.getAcceptance_date());		// 合格発表日
-        entity.setStart_date(startDate);					            // 訓練開始日
-        entity.setEnd_date(endDate);						            // 訓練終了日
-        entity.setStart_time(request.getStart_time());					// 授業開始時間
-        entity.setEnd_time(request.getEnd_time());						// 授業終了時間
-        entity.setTraining_hours(trainingHours);			            // 授業時間数
-        entity.setTotaltraining_hours(request.getTotaltraining_hours());// 総授業時間数
-        entity.setDeleteflg(request.isDeleteflg());                     // 削除フラグ
+        // Entityクラスに値セット
+        eList.setTrainingname(request.getTrainingname());
+        eList.setRecruit_start_date(request.getRecruit_start_date());
+        eList.setRecruit_end_date(request.getRecruit_end_date());
+        eList.setSelection_date(request.getSelection_date());
+        eList.setAcceptance_date(request.getAcceptance_date());
+        eList.setStart_date(startDate);
+        eList.setEnd_date(endDate);
+        eList.setStart_time(request.getStart_time());
+        eList.setEnd_time(request.getEnd_time());
+        eList.setTraining_hours(trainingHours);
+        eList.setTotaltraining_hours(request.getTotaltraining_hours());
+        eList.setDeleteflg(request.isDeleteflg());
 
         // 訓練スケジュールデータ作成
-        List<TrainingScheduleRequest> trainingDays = request.getTrainingDays();
-        entity.getTrainingSchedule().clear();
-        LocalDate trainingDate = LocalDate.now();
-
+        eList.getTrainingSchedule().clear();
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             TrainingSchedule oneDay = new TrainingSchedule();
-            oneDay.setTrainingList(entity);
+            oneDay.setTrainingInfo(eList);
             oneDay.setTraining_date(date);
             oneDay.setMemo("");
             oneDay.setTeacher_id(0L);
@@ -91,10 +89,10 @@ public class TrainingService {
                 oneDay.setTraining_hours(trainingHours);
             }
 
-            entity.getTrainingSchedule().add(oneDay);
+            eList.getTrainingSchedule().add(oneDay);
         }
 
-        TrainingList out = trainingRepository.save(entity);
+        TrainingInfo out = trainingRepository.save(eList);
 
     }
 
@@ -103,10 +101,10 @@ public class TrainingService {
      * @param id id
      */
     public void deleteTraining(Long id){
-        TrainingList entity = findById(id);
+        TrainingInfo eList = findById(id);
         // 削除フラグ設定
-        entity.setDeleteflg(true);
+        eList.setDeleteflg(true);
 
-        TrainingList out = trainingRepository.save(entity);
+        TrainingInfo out = trainingRepository.save(eList);
     }
 }
