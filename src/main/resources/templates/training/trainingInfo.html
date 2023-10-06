@@ -8,6 +8,10 @@
 		<br>
 		<h2>訓練情報</h2>
 		<br>
+		<div class="text-end">
+			<a href="" title="作成中です..." class="btn btn-success">訓練スケジュール登録</a>
+		</div>
+		<br>
 		<form th:action="@{/training/create}" th:object="${trainingRequest}" th:method="post">
 			<div class="input-group mb-3" hidden>
 				<span class="input-group-text">ID</span>
@@ -66,7 +70,11 @@
     </div>
 	<datalist id="data-list">
 		<option value="09:00"></option>
+		<option value="09:10"></option>
+		<option value="09:20"></option>
 		<option value="09:30"></option>
+		<option value="09:40"></option>
+		<option value="09:50"></option>
 		<option value="10:00"></option>
 		<option value="10:30"></option>
 		<option value="11:00"></option>
