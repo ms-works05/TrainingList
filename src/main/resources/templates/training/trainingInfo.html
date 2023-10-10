@@ -8,9 +8,12 @@
 		<br>
 		<h2>訓練情報</h2>
 		<br>
-		<div class="text-end">
-			<a href="" title="作成中です..." class="btn btn-success">訓練スケジュール登録</a>
-		</div>
+		<!--	新規登録の場合「訓練スケジュール登録」ボタン非表示	-->
+		<th:block th:if="${trainingRequest.id != 0}">
+			<div class="text-end">
+				<a href="" title="作成中です..." class="btn btn-success">訓練スケジュール登録</a>
+			</div>
+		</th:block>
 		<br>
 		<form th:action="@{/training/create}" th:object="${trainingRequest}" th:method="post">
 			<div class="input-group mb-3" hidden>
@@ -69,28 +72,15 @@
 		</form>
     </div>
 	<datalist id="data-list">
-		<option value="09:00"></option>
-		<option value="09:10"></option>
-		<option value="09:20"></option>
-		<option value="09:30"></option>
-		<option value="09:40"></option>
-		<option value="09:50"></option>
-		<option value="10:00"></option>
-		<option value="10:30"></option>
-		<option value="11:00"></option>
-		<option value="11:30"></option>
-		<option value="12:00"></option>
-		<option value="12:30"></option>
-		<option value="13:00"></option>
-		<option value="13:30"></option>
-		<option value="14:00"></option>
-		<option value="14:30"></option>
-		<option value="15:00"></option>
-		<option value="15:30"></option>
-		<option value="16:00"></option>
-		<option value="16:30"></option>
-		<option value="17:00"></option>
-		<option value="17:30"></option>
+		<option value="09:00"></option><option value="09:10"></option><option value="09:20"></option><option value="09:30"></option><option value="09:40"></option><option value="09:50"></option>
+		<option value="10:00"></option><option value="10:10"></option><option value="10:20"></option><option value="10:30"></option><option value="10:40"></option><option value="10:50"></option>
+		<option value="11:00"></option><option value="11:10"></option><option value="11:20"></option><option value="11:30"></option><option value="11:40"></option><option value="11:50"></option>
+		<option value="12:00"></option><option value="12:10"></option><option value="12:20"></option><option value="12:30"></option><option value="12:40"></option><option value="12:50"></option>
+		<option value="13:00"></option><option value="13:10"></option><option value="13:20"></option><option value="13:30"></option><option value="13:40"></option><option value="13:50"></option>
+		<option value="14:00"></option><option value="14:10"></option><option value="14:20"></option><option value="14:30"></option><option value="14:40"></option><option value="14:50"></option>
+		<option value="15:00"></option><option value="15:10"></option><option value="15:20"></option><option value="15:30"></option><option value="15:40"></option><option value="15:50"></option>
+		<option value="16:00"></option><option value="16:10"></option><option value="16:20"></option><option value="16:30"></option><option value="16:40"></option><option value="16:50"></option>
+		<option value="17:00"></option><option value="17:10"></option><option value="17:20"></option><option value="17:30"></option><option value="17:40"></option><option value="17:50"></option>
 		<option value="18:00"></option>
 	</datalist>
 </body>
