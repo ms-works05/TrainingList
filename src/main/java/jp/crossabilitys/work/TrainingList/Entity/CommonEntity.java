@@ -17,6 +17,7 @@ public abstract class CommonEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
+    @Column(updatable = false) // 更新時nullにならないために設定
     private LocalDateTime create_date;  // 登録日時
 
     @Temporal(TemporalType.TIMESTAMP)

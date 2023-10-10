@@ -1,13 +1,25 @@
 package jp.crossabilitys.work.TrainingList.controller;
 
-import jp.crossabilitys.work.TrainingList.Entity.TrainingList;
+import jp.crossabilitys.work.TrainingList.Entity.DailyTraining;
+import jp.crossabilitys.work.TrainingList.Entity.MonthlyTraining;
+import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
+import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
+import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TrainingListController {
@@ -18,37 +30,78 @@ public class TrainingListController {
     private TrainingService trainingService;
 
     /**
-     * 訓練情報一覧画面を表示
+     * 訓練情報一覧画面表示
      * @param model Model
      * @return 訓練情報一覧画面
      */
     @GetMapping("/training/list")
-    public String getAllTrainingList(Model model) {
-        List<TrainingList> traininglist = trainingService.searchAll();
+    public String displayTrainingList(Model model) {
+        List<TrainingInfo> traininglist = trainingService.searchAll();
         model.addAttribute("traininglist", traininglist);
         return "training/traininglist";
     }
 
     /**
-     * 訓練情報追加
-     * （訓練情報画面を表示し、登録処理を行う）
-     * @param model
-     * @return 訓練情報登録画面
+     * 訓練情報画面表示（新規登録）
+     * @param model Model
+     * @return 訓練情報画面
      */
     @GetMapping("/training/add")
-    public String trainingAdd(Model model) {
+    public String displayTrainingInfo(Model model) {
+        model.addAttribute("trainingRequest", new TrainingRequest());
         return "training/traininginfo";
     }
+
     /**
-     * 訓練情報更新
-     * （訓練情報画面を表示し、更新処理を行う）
+     * 訓練情報新規登録
+     * @param model model
+     * @param trainingRequest リクエストデータ
+     * @param result 入力チェックエラー情報
+     * @return 訓練一覧画面/訓練情報画面
+     */
+    @RequestMapping(value = "/training/create", method = RequestMethod.POST)
+    public String registTrainingInfo(Model model, @Validated @ModelAttribute TrainingRequest trainingRequest, BindingResult result,
+                                     RedirectAttributes redirectAttributes){
+        if(result.hasErrors()){
+            // 入力チェックエラーの場合
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.trainingRequest", result);
+            redirectAttributes.addFlashAttribute("trainingRequest", trainingRequest);
+            // 訓練情報画面表示
+            return "training/traininginfo";
+        }
+        // 訓練情報の登録
+        trainingService.registTraining(trainingRequest);
+        // 訓練一覧画面表示
+        return "redirect:/training/list";
+    }
+    /**
+     * 訓練情報画面表示 [更新]
+     * （訓練情報画面に遷移し、登録済データを表示）
      * @param model Model
      * @param id 表示する訓練ID
      * @return 訓練情報登録画面
      */
-    @GetMapping("/training/update/{id}")
-    public String trainingUpdate(Model model, @PathVariable Long id) {
-        // 仮
+    @GetMapping("/training/update/{trainingId}")
+    public String displayTrainingUpdate(Model model, @PathVariable("trainingId") Long id) {
+        TrainingInfo entity = trainingService.findById(id);
+        TrainingRequest request = new TrainingRequest();
+
+        request.setId(entity.getId());
+        request.setTrainingname(entity.getTrainingname());
+        request.setRecruit_start_date(entity.getRecruit_start_date());
+        request.setRecruit_end_date(entity.getRecruit_end_date());
+        request.setSelection_date(entity.getSelection_date());
+        request.setAcceptance_date(entity.getAcceptance_date());
+        request.setStart_date(entity.getStart_date());
+        request.setEnd_date(entity.getEnd_date());
+        request.setStart_time(entity.getStart_time());
+        request.setEnd_time(entity.getEnd_time());
+        request.setTraining_hours(entity.getTraining_hours());
+        request.setTotaltraining_hours(entity.getTotaltraining_hours());
+        request.setDeleteflg(entity.isDeleteflg());
+
+        model.addAttribute("trainingRequest", request);
+
         return "training/traininginfo";
     }
 
@@ -58,9 +111,163 @@ public class TrainingListController {
      * @param id 削除する訓練ID
      * @return 訓練情報一覧画面
      */
-    @GetMapping("/training/delete/{id}")
-    public String trainingDelete(Model model, @PathVariable Long id){
-        // 仮
-        return "training/traininglist";
+    @GetMapping("/training/delete/{trainingId}")
+    public String deleteTrainingInfo(Model model, @PathVariable("trainingId") Long id){
+        // 訓練情報の登録(削除フラグ=true)
+        trainingService.deleteTraining(id);
+
+        return "redirect:/training/list";
+    }
+
+    /**
+     * 訓練時間表画面表示
+     * @param model Model
+     * @param id 表示する訓練ID
+     * @return 訓練時間表画面
+     */
+    @GetMapping("/training/timetable/{trainingId}")
+    public String displayTimetable(Model model, @PathVariable("trainingId") Long id){
+
+        // 対象の訓練スケジュール取得
+        TrainingInfo targetData = trainingService.findById(id);
+
+        // 表示用データ設定
+        model.addAttribute("id", id);
+        model.addAttribute("trainingname", targetData.getTrainingname());
+        model.addAttribute("timetable", setTimeTable(targetData));
+
+        return "training/timetable";
+    }
+
+    /**
+     * 訓練時間表表示用データ設定
+     * @param targetData 訓練スケジュール
+     * @return 訓練時間表表示用データ
+     */
+    private List<MonthlyTraining> setTimeTable(TrainingInfo targetData){
+        final var locale = Locale.getDefault();
+        final List<MonthlyTraining> timeTable = new ArrayList<>();
+        List<DailyTraining> dailyTrainings = new ArrayList<>();
+        MonthlyTraining monthlyTraining = new MonthlyTraining();
+        int currentMonth = 0;
+        int totalDays = 0;
+        int totalHours = 0;
+
+        // 訓練スケジュール取得
+        List<TrainingSchedule> trainingSchedule = targetData.getTrainingSchedule();
+        // 訓練期間ループ
+        for(int i = 0; i < trainingSchedule.size(); ++i){
+            // 1日の訓練データ取得
+            TrainingSchedule oneDay = trainingSchedule.get(i);
+            // 作業月取得
+            int month = oneDay.getTraining_date().getMonth().getValue();
+            // 訓練初日の場合
+            if (i==0){
+                /* --- 月初から訓練開始日までのデータ作成 --- */
+                setDummyDataDaily(dailyTrainings, oneDay.getTraining_date().getDayOfMonth()-1);
+/* 月初から訓練開始日までのデータで、曜日を入れたい場合はココのコメントを復活
+                // 月初日から訓練開始日前日までループ
+                for (LocalDate date = oneDay.getTraining_date().withDayOfMonth(1); date.isBefore(oneDay.getTraining_date()); date = date.plusDays(1)){
+                    // 1日の訓練データ作成
+                    final DailyTraining dailyTraining = new DailyTraining();
+                    dailyTraining.setTraining_date(oneDay.getTraining_date());
+                    dailyTraining.setTraining_hours(0);
+                    dailyTraining.setBackcolor(9);
+
+                    dailyTrainings.add(dailyTraining);
+                }
+*/
+                currentMonth = month;   // 作業月設定
+            }
+            // 月が変わった場合
+            if (currentMonth != month){
+                /* --- 月末から31日までのデータ作成 --- */
+                int endDay = oneDay.getTraining_date().minusDays(1).getDayOfMonth();
+                if (endDay < 31){
+                    setDummyDataDaily(dailyTrainings, (31 - endDay));
+                }
+                /* --- ひと月分のデータ作成 --- */
+                monthlyTraining = new MonthlyTraining();
+                monthlyTraining.setMonth(currentMonth);
+                monthlyTraining.setTotalTraining_days(totalDays);
+                monthlyTraining.setTotalTraining_hours(totalHours);
+                monthlyTraining.setTrainings(dailyTrainings);
+                timeTable.add(monthlyTraining);
+                dailyTrainings = new ArrayList<>();
+                currentMonth = month;
+                totalDays = 0;
+                totalHours = 0;
+            }
+            // 1日の訓練データ作成
+            final DailyTraining dailyTraining = new DailyTraining();
+            dailyTraining.setTraining_date(oneDay.getTraining_date());
+            dailyTraining.setTraining_hours(oneDay.getTraining_hours());
+            if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == 0){
+                // 訓練日で講師割当がない場合、背景色「講師登録なし」設定
+                dailyTraining.setBackcolor(setBackColorCell(9));
+            }else {
+                dailyTraining.setBackcolor(setBackColorCell(oneDay.getTraining_date().getDayOfWeek().getValue()));
+            }
+            dailyTrainings.add(dailyTraining);
+
+            // 訓練日の場合、訓練日数・訓練時間を加算
+            if (oneDay.getTraining_hours() > 0){
+                totalDays += 1;
+                totalHours += oneDay.getTraining_hours();
+            }
+
+            // 訓練最終日の場合
+            if ( i>=trainingSchedule.size()-1){
+                /* --- 訓練修了日から月末(31日分)までのデータ作成 --- */
+                int endDay = oneDay.getTraining_date().getDayOfMonth();
+                if (endDay < 31){
+                    setDummyDataDaily(dailyTrainings, (31 - endDay));
+                }
+                /* --- ひと月分のデータ作成 --- */
+                monthlyTraining = new MonthlyTraining();
+                monthlyTraining.setMonth(currentMonth);
+                monthlyTraining.setTotalTraining_days(totalDays);
+                monthlyTraining.setTotalTraining_hours(totalHours);
+                monthlyTraining.setTrainings(dailyTrainings);
+                timeTable.add(monthlyTraining);
+            }
+        }
+        return timeTable;
+    }
+    /**
+     * 訓練スケジュールダミーデータ作成
+     * 1日分の訓練スケジュールデータをデータ数分作成する
+     * @param dailyTrainings 日別訓練スケジュールリスト
+     * @param dataCount データ数
+     */
+    private void setDummyDataDaily(List<DailyTraining> dailyTrainings, int dataCount){
+
+        for (int i = 0; i < dataCount; i++) {
+            final DailyTraining dailyTraining = new DailyTraining();
+            dailyTraining.setTraining_date(null);
+            dailyTraining.setTraining_hours(0);
+            dailyTraining.setBackcolor(setBackColorCell(0));
+
+            dailyTrainings.add(dailyTraining);
+        }
+    }
+
+    /**
+     * 背景色設定
+     * 訓練時間表画面のセル背景色を設定
+     * @param index 1～7:曜日のint値, 0:対象外, 9:講師登録なし
+     * @return
+     */
+    private String setBackColorCell(int index){
+        switch (index){
+            case 0:     // 対象外
+                return "outofdata";
+            case 6,7:   // 土日
+                return "holiday";
+            case 9:     // 講師登録なし
+                return "nodata";
+            default:
+                return "";
+        }
     }
 }
