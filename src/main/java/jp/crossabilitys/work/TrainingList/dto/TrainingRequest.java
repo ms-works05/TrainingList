@@ -29,7 +29,6 @@ public class TrainingRequest {
     @NotNull(message = "選考日を入力してください")
     private LocalDate selection_date;
 
-    @NotNull(message = "合格発表日を入力してください")
     private LocalDate acceptance_date;
 
     @NotNull(message = "訓練開始日を入力してください")

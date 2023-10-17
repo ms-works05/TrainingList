@@ -1,9 +1,12 @@
-package jp.crossabilitys.work.TrainingList.Entity;
+package jp.crossabilitys.work.TrainingList.dto;
 
 import lombok.Data;
 
 import java.time.LocalDate;
 
+/**
+ * 訓練時間表データ（日）保持クラス
+ */
 @Data
 public class DailyTraining {
     private LocalDate training_date;    // 訓練日

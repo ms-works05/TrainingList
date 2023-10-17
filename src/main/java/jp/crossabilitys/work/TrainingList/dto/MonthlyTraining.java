@@ -1,9 +1,11 @@
-package jp.crossabilitys.work.TrainingList.Entity;
+package jp.crossabilitys.work.TrainingList.dto;
 
 import lombok.Data;
 
 import java.util.List;
-
+/**
+ * 訓練時間表データ（月）保持クラス
+ */
 @Data
 public class MonthlyTraining {
 

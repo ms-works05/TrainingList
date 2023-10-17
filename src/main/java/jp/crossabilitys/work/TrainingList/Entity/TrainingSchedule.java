@@ -12,8 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Table(name = "TRAININGSCHEDULE")
-public class
-TrainingSchedule extends CommonEntity {
+public class TrainingSchedule extends CommonEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;                    // ID(主キー)
@@ -28,8 +27,12 @@ TrainingSchedule extends CommonEntity {
 
     private Long teacher_id;            // 講師ID
 
+    @OneToOne
+    @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
+    private TeacherInfo teacherInfo;        // 講師情報
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "TRAININGINFO_ID", nullable = false)
+    @JoinColumn(name = "training_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private TrainingInfo trainingInfo;

@@ -1,18 +1,18 @@
 package jp.crossabilitys.work.TrainingList.controller;
 
-import jp.crossabilitys.work.TrainingList.Entity.DailyTraining;
-import jp.crossabilitys.work.TrainingList.Entity.MonthlyTraining;
+import jp.crossabilitys.work.TrainingList.Entity.TeacherInfo;
+import jp.crossabilitys.work.TrainingList.dto.*;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
-import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
+import jp.crossabilitys.work.TrainingList.service.TeacherService;
+import jp.crossabilitys.work.TrainingList.service.TrainingScheduleService;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.List;
+
+import one.cafebabe.businesscalendar4j.BusinessCalendar;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +28,16 @@ public class TrainingListController {
      */
     @Autowired
     private TrainingService trainingService;
+    /**
+     * 訓練スケジュール Service
+     */
+    @Autowired
+    private TrainingScheduleService scheduleService;
+    /**
+     * 講師情報 Service
+     */
+    @Autowired
+    private TeacherService teacherService;
 
     /**
      * 訓練情報一覧画面表示
@@ -83,6 +93,7 @@ public class TrainingListController {
      */
     @GetMapping("/training/update/{trainingId}")
     public String displayTrainingUpdate(Model model, @PathVariable("trainingId") Long id) {
+        // 対象の訓練情報取得
         TrainingInfo entity = trainingService.findById(id);
         TrainingRequest request = new TrainingRequest();
 
@@ -128,7 +139,7 @@ public class TrainingListController {
     @GetMapping("/training/timetable/{trainingId}")
     public String displayTimetable(Model model, @PathVariable("trainingId") Long id){
 
-        // 対象の訓練スケジュール取得
+        // 対象の訓練情報取得
         TrainingInfo targetData = trainingService.findById(id);
 
         // 表示用データ設定
@@ -137,6 +148,50 @@ public class TrainingListController {
         model.addAttribute("timetable", setTimeTable(targetData));
 
         return "training/timetable";
+    }
+    /**
+     * 訓練時間表画面表示
+     * @param model Model
+     * @param id 表示する訓練ID
+     * @return 訓練時間表画面
+     */
+    @GetMapping("/training/editschedule/{trainingId}")
+    public String displayEditSchedule(Model model, @PathVariable("trainingId") Long id){
+
+        // 対象の訓練情報取得
+        TrainingInfo targetData = trainingService.findById(id);
+        ScheduleData scheduleList = scheduleService.searchSchedule(id);
+
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+
+        // 表示用データ設定
+        model.addAttribute("training_id", id);
+        model.addAttribute("trainingname", targetData.getTrainingname());
+//        model.addAttribute("trainingData", targetData);
+        model.addAttribute("schedulelist", scheduleList);
+        model.addAttribute("teacherlist",teacherlist);
+
+        return "training/editschedule";
+    }
+
+    /**
+     * スケジュール登録
+     * @param model Model
+     * @param Request
+     * @param result 入力チェックエラー情報
+     * @param redirectAttributes
+     * @return
+     */
+    @RequestMapping(value = "/schedule/edit", method = RequestMethod.POST)
+    public String editSchedule(Model model, @ModelAttribute ScheduleData Request, BindingResult result,
+                               RedirectAttributes redirectAttributes){
+
+        // 訓練スケジュール更新
+        scheduleService.updateAll(Request);
+
+        return "redirect:/training/timetable/102"; // ←仮
+//        return String.format("redirect:/training/timetable/%d", "training_idを渡したい");
     }
 
     /**
@@ -152,6 +207,9 @@ public class TrainingListController {
         int currentMonth = 0;
         int totalDays = 0;
         int totalHours = 0;
+
+        // 祝日
+        BusinessCalendar holidays = BusinessCalendar.newBuilder().holiday(BusinessCalendar.JAPAN.PUBLIC_HOLIDAYS).build();
 
         // 訓練スケジュール取得
         List<TrainingSchedule> trainingSchedule = targetData.getTrainingSchedule();
@@ -202,9 +260,12 @@ public class TrainingListController {
             final DailyTraining dailyTraining = new DailyTraining();
             dailyTraining.setTraining_date(oneDay.getTraining_date());
             dailyTraining.setTraining_hours(oneDay.getTraining_hours());
-            if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == 0){
+            if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == null) {
                 // 訓練日で講師割当がない場合、背景色「講師登録なし」設定
                 dailyTraining.setBackcolor(setBackColorCell(9));
+            }else if(holidays.isHoliday(oneDay.getTraining_date())){
+                // 祝日
+                dailyTraining.setBackcolor(setBackColorCell(8));
             }else {
                 dailyTraining.setBackcolor(setBackColorCell(oneDay.getTraining_date().getDayOfWeek().getValue()));
             }
@@ -255,7 +316,7 @@ public class TrainingListController {
     /**
      * 背景色設定
      * 訓練時間表画面のセル背景色を設定
-     * @param index 1～7:曜日のint値, 0:対象外, 9:講師登録なし
+     * @param index 1～7:曜日のint値, 0:対象外, 8:祝日, 9:講師登録なし
      * @return
      */
     private String setBackColorCell(int index){
@@ -264,6 +325,8 @@ public class TrainingListController {
                 return "outofdata";
             case 6,7:   // 土日
                 return "holiday";
+            case 8:     // 祝日
+                return "nholiday";
             case 9:     // 講師登録なし
                 return "nodata";
             default:

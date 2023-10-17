@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
 import jp.crossabilitys.work.TrainingList.repository.TrainingRepository;
+
+import one.cafebabe.businesscalendar4j.BusinessCalendar;
 
 /**
  * 訓練情報 Service
@@ -29,6 +32,7 @@ public class TrainingService {
      */
     public List<TrainingInfo> searchAll() {
         return trainingRepository.searchAll(false);
+
     }
 
     /**
@@ -51,6 +55,9 @@ public class TrainingService {
         LocalDate startDate = request.getStart_date();      // 訓練期間
         LocalDate endDate = request.getEnd_date();
         int trainingHours = request.getTraining_hours();    // 訓練時間数
+
+        // 祝日
+        BusinessCalendar holidays = BusinessCalendar.newBuilder().holiday(BusinessCalendar.JAPAN.PUBLIC_HOLIDAYS).build();
 
         // 更新の場合
         if (request.getId()!=0){
@@ -80,25 +87,22 @@ public class TrainingService {
             oneDay.setTrainingInfo(eList);
             oneDay.setTraining_date(date);
             oneDay.setMemo("");
-            oneDay.setTeacher_id(0L);
+//            oneDay.setTeacher_id(0L);
 
-            if (date.getDayOfWeek().getValue() > 5) {
-                // 土日の場合、訓練時間数をゼロに設定
+            if ((date.getDayOfWeek().getValue() > 5) || (holidays.isHoliday(oneDay.getTraining_date())) ) {
+                // 土日祝日の場合、訓練時間数をゼロに設定
                 oneDay.setTraining_hours(0);
             }else{
                 oneDay.setTraining_hours(trainingHours);
             }
-
             eList.getTrainingSchedule().add(oneDay);
         }
-
         TrainingInfo out = trainingRepository.save(eList);
-
     }
 
     /**
      * 訓練情報 削除(論理削除)
-     * @param id id
+     * @param id ID
      */
     public void deleteTraining(Long id){
         TrainingInfo eList = findById(id);

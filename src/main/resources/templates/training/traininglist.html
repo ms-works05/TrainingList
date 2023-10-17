@@ -21,11 +21,11 @@
         <tbody>
         <tr th:each="training : ${traininglist}"  th:object="${training}">
             <td th:text="*{id}" hidden></td>
-<!--            <td th:text="*{trainingname}"></td>-->
+            <!--/* <td th:text="*{trainingname}"></td> */-->
             <td><a th:href="@{/training/timetable/{id}(id=*{id})}" th:text="*{trainingname}"></a></td>
             <td th:text="*{#temporals.format(start_date, 'yyyy/MM/dd(eee)')} + ' ～ ' + *{#temporals.format(end_date, 'yyyy/MM/dd(eee)')}"></td>
             <td>
-<!--                <a th:href="@{/training/timetable/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">スケジュール</a>-->
+                <!--/* <a th:href="@{/training/timetable/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">スケジュール</a> */-->
                 <a th:href="@{/training/update/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">編集</a>
                 <a th:href="@{/training/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" onclick="return confirm_delete(this.parentElement.parentElement.cells[1].firstChild.data)">削除</a>
             </td>
@@ -36,11 +36,10 @@
 <br>
 <!-- Navbar -->
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-<!--    <a th:href="@{/teacher/list}" class="btn btn-sm btn btn-outline-light">講師一覧へ</a>-->
-    <a href="" title="作成中です..." class="btn btn-sm btn btn-outline-light">講師一覧へ</a>
+    <a th:href="@{/teacher/list}" class="btn btn-sm btn btn-outline-light">講師一覧へ</a>
 </nav>
 <script>
-    <!-- 削除確認メッセージ -->
+    <!--/* 削除確認メッセージ */-->
 	function confirm_delete(data) {
 		return window.confirm(data + "を削除しますか？")
     };
