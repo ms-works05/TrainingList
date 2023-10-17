@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
 
-import one.cafebabe.businesscalendar4j.BusinessCalendarBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +87,7 @@ public class TrainingService {
             oneDay.setTrainingInfo(eList);
             oneDay.setTraining_date(date);
             oneDay.setMemo("");
-            oneDay.setTeacher_id(0L);
+//            oneDay.setTeacher_id(0L);
 
             if ((date.getDayOfWeek().getValue() > 5) || (holidays.isHoliday(oneDay.getTraining_date())) ) {
                 // 土日祝日の場合、訓練時間数をゼロに設定

@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+/**
+ * 訓練情報 Repository
+ */
 public interface TrainingRepository extends JpaRepository<TrainingInfo,Long>{
     @Query(value="SELECT * FROM TRAININGINFO where deleteflg=:deleteflg",nativeQuery = true)
     List<TrainingInfo> searchAll(boolean deleteflg);
+
 }

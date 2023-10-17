@@ -1,6 +1,5 @@
 package jp.crossabilitys.work.TrainingList.dto;
 
-import jp.crossabilitys.work.TrainingList.dto.DailyTraining;
 import lombok.Data;
 
 import java.util.List;
