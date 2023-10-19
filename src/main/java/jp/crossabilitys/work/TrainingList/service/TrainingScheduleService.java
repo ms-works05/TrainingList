@@ -46,6 +46,7 @@ public class TrainingScheduleService {
             row.setMemo(data.getMemo());
             list.add(row);
         }
+        scheduleData.setTraining_id(training_id);// 追加
         scheduleData.setScheduleDataList(list);
         return scheduleData;
     }
@@ -63,7 +64,12 @@ public class TrainingScheduleService {
             row.setTraining_date(data.getTraining_date());
             row.setTraining_hours(data.getTraining_hours());
             row.setMemo(data.getMemo());
-            row.setTeacher_id(data.getTeacher_id());
+            // 講師未選択の場合、nullをセット
+            if (data.getTeacher_id()==0) {
+                row.setTeacher_id(null);
+            }else {
+                row.setTeacher_id(data.getTeacher_id());
+            }
             list.add(row);
         }
         myRepojitory.saveAll(list);

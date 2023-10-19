@@ -153,7 +153,7 @@ public class TrainingListController {
      * 訓練時間表画面表示
      * @param model Model
      * @param id 表示する訓練ID
-     * @return 訓練時間表画面
+     * @return 訓練スケジュール編集画面
      */
     @GetMapping("/training/editschedule/{trainingId}")
     public String displayEditSchedule(Model model, @PathVariable("trainingId") Long id){
@@ -166,9 +166,8 @@ public class TrainingListController {
         List<TeacherInfo> teacherlist = teacherService.searchAll();
 
         // 表示用データ設定
-        model.addAttribute("training_id", id);
+//        model.addAttribute("training_id", id);
         model.addAttribute("trainingname", targetData.getTrainingname());
-//        model.addAttribute("trainingData", targetData);
         model.addAttribute("schedulelist", scheduleList);
         model.addAttribute("teacherlist",teacherlist);
 
@@ -179,19 +178,15 @@ public class TrainingListController {
      * スケジュール登録
      * @param model Model
      * @param Request
-     * @param result 入力チェックエラー情報
-     * @param redirectAttributes
-     * @return
+     * @return 訓練時間表画面
      */
     @RequestMapping(value = "/schedule/edit", method = RequestMethod.POST)
-    public String editSchedule(Model model, @ModelAttribute ScheduleData Request, BindingResult result,
-                               RedirectAttributes redirectAttributes){
+    public String editSchedule(Model model, @ModelAttribute ScheduleData Request){
 
         // 訓練スケジュール更新
         scheduleService.updateAll(Request);
 
-        return "redirect:/training/timetable/102"; // ←仮
-//        return String.format("redirect:/training/timetable/%d", "training_idを渡したい");
+        return  "redirect:/training/timetable/"+ Request.getTraining_id().toString();
     }
 
     /**
@@ -200,7 +195,6 @@ public class TrainingListController {
      * @return 訓練時間表表示用データ
      */
     private List<MonthlyTraining> setTimeTable(TrainingInfo targetData){
-        final var locale = Locale.getDefault();
         final List<MonthlyTraining> timeTable = new ArrayList<>();
         List<DailyTraining> dailyTrainings = new ArrayList<>();
         MonthlyTraining monthlyTraining = new MonthlyTraining();

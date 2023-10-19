@@ -9,5 +9,6 @@ import java.util.List;
  */
 @Data
 public class ScheduleData {
+    private Long training_id;           // 訓練ID
     private List<TrainingScheduleRequest> scheduleDataList;
 }

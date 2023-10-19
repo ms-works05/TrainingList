@@ -15,7 +15,7 @@
             </a>
             <div class="text-end">
                 <input type="submit" value="　更新　" class="btn btn-primary btn-block" />
-                <input type="hidden" th:field="${training_id}" />
+                <input type="hidden" th:field="*{training_id}" />
                 <!--/* <a th:href="@{/training/timetable/{id}(id=${training_id})}" class="btn btn-outline-primary btn-block">キャンセル</a> */-->
             </div>
         </div>
@@ -67,7 +67,7 @@
 <!-- Navbar -->
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
     <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light btn-sm">訓練一覧へ</a>
-    <a th:href="@{/training/timetable/{id}(id=${training_id})}" class="btn btn-sm btn-outline-light">訓練時間表へ</a>
+    <a th:href="@{/training/timetable/{id}(id=${schedulelist.training_id})}" class="btn btn-sm btn-outline-light">訓練時間表へ</a>
 </nav>
 </body>
 </html>
