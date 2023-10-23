@@ -252,6 +252,7 @@ public class TrainingListController {
             }
             // 1日の訓練データ作成
             final DailyTraining dailyTraining = new DailyTraining();
+            dailyTraining.setId(oneDay.getId());
             dailyTraining.setTraining_date(oneDay.getTraining_date());
             dailyTraining.setTraining_hours(oneDay.getTraining_hours());
             if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == null) {
