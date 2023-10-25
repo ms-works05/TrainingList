@@ -1,0 +1,58 @@
+/* ----- 訓練時間表 ----- */
+/* 曜日行 */
+tr.row_dow{
+/* 	height: 20px; */
+}
+/* データ行 */
+tr.row_data{
+ 	height: 35px;
+	font-size: x-small;
+	text-align:center;
+}
+/* 曜日セル */
+td.dow{
+ 	height: 10px;
+	font-size: small;
+	text-align:center;
+}
+/* 休日 */
+td.holiday{
+	background-color: #d1d1d1;
+}
+/* 祝日 */
+td.nholiday{
+	background-color: #ffcccc;
+}
+/* 講師登録なし */
+td.nodata{
+	background-color: #ff0000;
+}
+/* 対象外 */
+td.outofdata {
+    background-color: #e2e7eb;
+}
+/* コンテキストメニュー */
+#contextmenu{
+    display:none;
+    position:fixed;
+    left:0px;
+    top:0px;
+    width:200px;
+    height:100px;
+    border:1px solid #000;
+    background-color:#fff;
+}
+#contextmenu li{
+    cursor:pointer;
+}
+/* ----- スケジュール情報 ----- */
+#calendar td.holiday{
+	background-color: #dddddd;
+}
+#calendar td.nholiday{
+	background-color: #ffcccc;
+}
+.inputhours{
+    width:40px;
+}
+
