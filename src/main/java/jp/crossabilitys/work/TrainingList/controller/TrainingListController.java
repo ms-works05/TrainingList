@@ -1,9 +1,11 @@
 package jp.crossabilitys.work.TrainingList.controller;
 
+import jp.crossabilitys.work.TrainingList.Entity.Consignor;
 import jp.crossabilitys.work.TrainingList.Entity.TeacherInfo;
 import jp.crossabilitys.work.TrainingList.dto.*;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
+import jp.crossabilitys.work.TrainingList.service.ConsignorService;
 import jp.crossabilitys.work.TrainingList.service.TeacherService;
 import jp.crossabilitys.work.TrainingList.service.TrainingScheduleService;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
@@ -38,6 +40,11 @@ public class TrainingListController {
      */
     @Autowired
     private TeacherService teacherService;
+    /**
+     * 委託元 Service
+     */
+    @Autowired
+    private ConsignorService consignorService;
 
     /**
      * 訓練情報一覧画面表示
@@ -58,6 +65,10 @@ public class TrainingListController {
      */
     @GetMapping("/training/add")
     public String displayTrainingInfo(Model model) {
+        // 委託元データ設定
+        List<Consignor> consignorList = consignorService.searchAll();
+        model.addAttribute("consignorlist",consignorList);
+
         model.addAttribute("trainingRequest", new TrainingRequest());
         return "training/traininginfo";
     }
@@ -109,9 +120,13 @@ public class TrainingListController {
         request.setEnd_time(entity.getEnd_time());
         request.setTraining_hours(entity.getTraining_hours());
         request.setTotaltraining_hours(entity.getTotaltraining_hours());
+        request.setConsignor_id(entity.getConsignor_id());
         request.setDeleteflg(entity.isDeleteflg());
 
         model.addAttribute("trainingRequest", request);
+
+        List<Consignor> consignorList = consignorService.searchAll();
+        model.addAttribute("consignorlist",consignorList);
 
         return "training/traininginfo";
     }

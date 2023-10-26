@@ -13,6 +13,7 @@
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
         <tr>
+            <th>種別</th>
             <th>訓練名</th>
             <th>訓練期間</th>
             <th></th>
@@ -22,6 +23,8 @@
         <tr th:each="training : ${traininglist}"  th:object="${training}">
             <td th:text="*{id}" hidden></td>
             <!--/* <td th:text="*{trainingname}"></td> */-->
+            <!--/* 委託元が設定されている場合は名称を表示 */-->
+            <td th:text="*{consignor_id != 0 || not #strings.isEmpty(consignor)}? *{consignor.name2} : ''"></td>
             <td><a th:href="@{/training/timetable/{id}(id=*{id})}" th:text="*{trainingname}"></a></td>
             <td th:text="*{#temporals.format(start_date, 'yyyy/MM/dd(eee)')} + ' ～ ' + *{#temporals.format(end_date, 'yyyy/MM/dd(eee)')}"></td>
             <td>

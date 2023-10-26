@@ -54,6 +54,12 @@ public class TrainingInfo extends CommonEntity {
 
     private int totaltraining_hours;        // 総授業時間数
 
+    private Long consignor_id;               // 委託元ID
+
+    @OneToOne
+    @JoinColumn(name = "consignor_id", insertable = false, updatable = false)
+    private Consignor consignor;            // 委託元
+
     private boolean deleteflg;              // 削除フラグ
 
     @OneToMany(targetEntity = jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule.class,

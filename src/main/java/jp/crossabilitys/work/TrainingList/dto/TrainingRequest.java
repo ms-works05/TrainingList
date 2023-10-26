@@ -29,7 +29,7 @@ public class TrainingRequest {
     @NotNull(message = "選考日を入力してください")
     private LocalDate selection_date;
 
-    private LocalDate acceptance_date;
+    private LocalDate acceptance_date;  // 合格発表日
 
     @NotNull(message = "訓練開始日を入力してください")
     private LocalDate start_date;
@@ -43,9 +43,11 @@ public class TrainingRequest {
     @NotNull(message = "授業終了時間を入力してください")
     private LocalTime end_time;
 
-    private int training_hours;
+    private int training_hours;         // 授業時間数(HTMLでvalidation)
 
-    private int totaltraining_hours;    // 総授業時間数
+    private int totaltraining_hours;    // 総授業時間数（未使用）
+
+    private Long consignor_id;          // 委託元ID
 
     private boolean deleteflg;          // 削除フラグ
 

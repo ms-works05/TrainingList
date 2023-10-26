@@ -79,6 +79,12 @@ public class TrainingService {
         eList.setTraining_hours(trainingHours);
         eList.setTotaltraining_hours(request.getTotaltraining_hours());
         eList.setDeleteflg(request.isDeleteflg());
+        // 委託元未選択の場合、nullをセット
+        if (request.getConsignor_id()==0) {
+            eList.setConsignor_id(null);
+        }else {
+            eList.setConsignor_id(request.getConsignor_id());
+        }
 
         // 訓練スケジュールデータ作成
         eList.getTrainingSchedule().clear();

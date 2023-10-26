@@ -16,6 +16,13 @@
 		</th:block>
 		<br>
 		<form th:action="@{/training/create}" th:object="${trainingRequest}" th:method="post">
+			<div class="input-group mb-3">
+				<span class="input-group-text">種別</span>
+				<select id="type" class="form-select" th:field="${trainingRequest.consignor_id}">
+					<option th:value="0"></option>
+					<option th:each="item : ${consignorlist}" th:value="${item.id}" th:text="${item.name1}"></option>
+				</select>
+			</div>
 			<div class="input-group mb-3" hidden>
 				<span class="input-group-text">ID</span>
 				<input type="text" class="form-control" th:field="*{id}" />
