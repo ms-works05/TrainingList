@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
@@ -19,13 +19,13 @@ import one.cafebabe.businesscalendar4j.BusinessCalendar;
  * 訓練情報 Service
  */
 @Service
+@RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class TrainingService {
     /**
      *  訓練情報 Repository
      */
-    @Autowired
-    private TrainingRepository trainingRepository;
+    private final TrainingRepository trainingRepository;
     /**
      * 訓練情報 全検索
      * @return 検索結果

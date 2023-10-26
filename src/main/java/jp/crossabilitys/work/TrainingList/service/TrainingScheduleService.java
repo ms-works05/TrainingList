@@ -4,7 +4,7 @@ import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
 import jp.crossabilitys.work.TrainingList.dto.ScheduleData;
 import jp.crossabilitys.work.TrainingList.dto.TrainingScheduleRequest;
 import jp.crossabilitys.work.TrainingList.repository.TrainingScheduleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +15,13 @@ import java.util.List;
  * 訓練スケジュール Service
  */
 @Service
+@RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class TrainingScheduleService {
     /**
      * 訓練スケジュール Repository
       */
-    @Autowired
-    private TrainingScheduleRepository myRepojitory;
+    private final TrainingScheduleRepository myRepojitory;
 
     /**
      * 訓練スケジュール 検索

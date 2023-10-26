@@ -3,7 +3,7 @@ package jp.crossabilitys.work.TrainingList.controller;
 import jp.crossabilitys.work.TrainingList.Entity.TeacherInfo;
 import jp.crossabilitys.work.TrainingList.dto.TeacherRequest;
 import jp.crossabilitys.work.TrainingList.service.TeacherService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,12 +14,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class TeacherController {
     /**
      * 講師情報 Service
      */
-    @Autowired
-    private TeacherService teacherService;
+    private final TeacherService teacherService;
     /**
      * 講師情報一覧画面表示
      * @param model Model

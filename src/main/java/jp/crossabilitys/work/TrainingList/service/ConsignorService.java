@@ -2,7 +2,7 @@ package jp.crossabilitys.work.TrainingList.service;
 
 import jp.crossabilitys.work.TrainingList.Entity.Consignor;
 import jp.crossabilitys.work.TrainingList.repository.ConsignorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,13 +12,13 @@ import java.util.List;
  * 委託元 Service
  */
 @Service
+@RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class ConsignorService {
     /**
      * 委託元 Repository
      */
-    @Autowired
-    private ConsignorRepository myRepojitory;
+    private final ConsignorRepository myRepojitory;
 
     /**
      * 委託元 全検索
