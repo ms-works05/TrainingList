@@ -24,8 +24,15 @@
             <td th:text="*{id}" hidden></td>
             <!--/* <td th:text="*{trainingname}"></td> */-->
             <!--/* 委託元が設定されている場合は名称を表示 */-->
-            <td th:text="*{consignor_id != 0 || not #strings.isEmpty(consignor)}? *{consignor.name2} : ''"></td>
-            <td><a th:href="@{/training/timetable/{id}(id=*{id})}" th:text="*{trainingname}"></a></td>
+            <!--/* <td th:text="*{consignor_id != 0 || not #strings.isEmpty(consignor)}? *{consignor.name2} : ''"></td> */-->
+            <td th:text="*{not #strings.isEmpty(consignorname)}? *{consignorname} : ''"></td>
+            <td>
+                <a th:href="@{/training/timetable/{id}(id=*{id})}" th:text="*{trainingname}"></a>
+                <!--/* 講師未割当件数が0より大きい場合表示 */-->
+                <th:block th:if="*{unassignedcount > 0}">
+                    <span class="badge bg-danger">講師未割当</span>
+                </th:block>
+            </td>
             <td th:text="*{#temporals.format(start_date, 'yyyy/MM/dd(eee)')} + ' ～ ' + *{#temporals.format(end_date, 'yyyy/MM/dd(eee)')}"></td>
             <td>
                 <!--/* <a th:href="@{/training/timetable/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">スケジュール</a> */-->

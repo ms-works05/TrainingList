@@ -4,16 +4,20 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
-import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
-import jp.crossabilitys.work.TrainingList.repository.TrainingRepository;
+
+import lombok.RequiredArgsConstructor;
 
 import one.cafebabe.businesscalendar4j.BusinessCalendar;
+
+import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
+import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
+import jp.crossabilitys.work.TrainingList.dto.TrainingRequest;
+import jp.crossabilitys.work.TrainingList.dto.TrainingList;
+import jp.crossabilitys.work.TrainingList.repository.TrainingRepository;
+import jp.crossabilitys.work.TrainingList.repository.TrainingListRepository;
+
 
 /**
  * 訓練情報 Service
@@ -23,9 +27,13 @@ import one.cafebabe.businesscalendar4j.BusinessCalendar;
 @Transactional(rollbackFor = Exception.class)
 public class TrainingService {
     /**
-     *  訓練情報 Repository
+     * 訓練情報 Repository
      */
     private final TrainingRepository trainingRepository;
+    /**
+     * 訓練情報(一覧表示用) Repository
+     */
+    private final TrainingListRepository listRepository;
     /**
      * 訓練情報 全検索
      * @return 検索結果
@@ -33,6 +41,14 @@ public class TrainingService {
     public List<TrainingInfo> searchAll() {
         return trainingRepository.searchAll(false);
 
+    }
+    /**
+     * 訓練情報 全検索
+     * 講師未割当件数を取得
+     * @return 検索結果
+     */
+    public List<TrainingList> searchAllwithAssign(){
+        return listRepository.searchAllwithAssign(false);
     }
 
     /**

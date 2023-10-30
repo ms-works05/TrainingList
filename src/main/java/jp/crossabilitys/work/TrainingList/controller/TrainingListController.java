@@ -49,7 +49,8 @@ public class TrainingListController {
      */
     @GetMapping("/training/list")
     public String displayTrainingList(Model model) {
-        List<TrainingInfo> traininglist = trainingService.searchAll();
+//        List<TrainingInfo> traininglist = trainingService.searchAll();
+        List<TrainingList> traininglist = trainingService.searchAllwithAssign();
         model.addAttribute("traininglist", traininglist);
         return "training/traininglist";
     }
