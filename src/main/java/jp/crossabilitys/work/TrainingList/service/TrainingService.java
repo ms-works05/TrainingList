@@ -18,7 +18,6 @@ import jp.crossabilitys.work.TrainingList.dto.TrainingList;
 import jp.crossabilitys.work.TrainingList.repository.TrainingRepository;
 import jp.crossabilitys.work.TrainingList.repository.TrainingListRepository;
 
-
 /**
  * 訓練情報 Service
  */
@@ -110,7 +109,7 @@ public class TrainingService {
         eList.setTraining_hours(trainingHours);
         eList.setTotaltraining_hours(request.getTotaltraining_hours());
         eList.setDeleteflg(request.isDeleteflg());
-        // 委託元未選択の場合、nullをセット
+        // 委託元選択の場合、nullをセット
         if (request.getConsignor_id()==0) {
             eList.setConsignor_id(null);
         }else {
@@ -124,14 +123,16 @@ public class TrainingService {
                 TrainingSchedule oneDay = new TrainingSchedule();
                 oneDay.setTrainingInfo(eList);
                 oneDay.setTraining_date(date);
-//                oneDay.setMemo("");
-//                oneDay.setTeacher_id(0L);
 
                 if ((date.getDayOfWeek().getValue() > 5) || (holidays.isHoliday(oneDay.getTraining_date())) ) {
                     // 土日祝日の場合、訓練時間数をゼロに設定
                     oneDay.setTraining_hours(0);
                 }else{
                     oneDay.setTraining_hours(trainingHours);
+                    // 講師選択した場合
+                    if (request.getTeacher_id() > 0) {
+                        oneDay.setTeacher_id(request.getTeacher_id());
+                    }
                 }
                 eList.getTrainingSchedule().add(oneDay);
             }
@@ -139,8 +140,12 @@ public class TrainingService {
             // 訓練スケジュールデータ更新
             for (TrainingSchedule oneDay : eList.getTrainingSchedule()){
                 if (oneDay.getTraining_hours()>0) {
-                    // 訓練時間更新
+                    // 訓練時間
                     oneDay.setTraining_hours(trainingHours);
+                    // 講師選択した場合
+                    if (request.getTeacher_id() > 0) {
+                        oneDay.setTeacher_id(request.getTeacher_id());
+                    }
                 }
             }
         }

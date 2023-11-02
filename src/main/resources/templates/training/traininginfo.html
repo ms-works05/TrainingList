@@ -7,7 +7,6 @@
 	<div class="container">
 		<br>
 		<h2>訓練情報</h2>
-		<br>
 		<!--/* 新規登録の場合「訓練スケジュール登録」ボタン非表示 */-->
 		<th:block th:if="${trainingRequest.id != 0}">
 			<div class="text-end">
@@ -71,6 +70,16 @@
 				<span class="input-group-text">授業時間数</span>
 				<input type="number" class="form-control" min="1" max="8" name="training_hours" th:value="*{training_hours}" th:errorclass="is-invalid" />
 			</div>
+			<!--/* 新規登録の場合「講師一括登録」表示 */-->
+			<!--/* <th:block th:if="${trainingRequest.id == 0}"> */-->
+				<div class="input-group mb-3">
+					<span class="input-group-text">講師一括登録</span>
+					<select id="teacher" class="form-select" th:field="${trainingRequest.teacher_id}">
+						<option th:value="0">しない</option>
+						<option th:each="item : ${teacherlist}" th:value="${item.id}" th:text="${item.name}"></option>
+					</select>
+				</div>
+			<!--/* </th:block> */-->
 			<br>
 			<div class="text-center">
 				<input type="submit" value="　登録　" class="btn btn-primary btn-block">

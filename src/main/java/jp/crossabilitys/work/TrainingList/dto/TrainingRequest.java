@@ -49,6 +49,8 @@ public class TrainingRequest {
 
     private Long consignor_id;          // 委託元ID
 
+    private Long teacher_id;            // 講師ID
+
     private boolean deleteflg;          // 削除フラグ
 
     private List<TrainingScheduleRequest> trainingDays;

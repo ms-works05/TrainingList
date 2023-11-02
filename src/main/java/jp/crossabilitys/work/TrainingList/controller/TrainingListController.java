@@ -66,6 +66,10 @@ public class TrainingListController {
         List<Consignor> consignorList = consignorService.searchAll();
         model.addAttribute("consignorlist",consignorList);
 
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        model.addAttribute("teacherlist",teacherlist);
+
         model.addAttribute("trainingRequest", new TrainingRequest());
         return "training/traininginfo";
     }
@@ -122,8 +126,13 @@ public class TrainingListController {
 
         model.addAttribute("trainingRequest", request);
 
+        // 委託元データ設定
         List<Consignor> consignorList = consignorService.searchAll();
         model.addAttribute("consignorlist",consignorList);
+
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        model.addAttribute("teacherlist",teacherlist);
 
         return "training/traininginfo";
     }
