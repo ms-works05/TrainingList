@@ -30,7 +30,7 @@
             </tr>
             <tr>
                 <th:block  th:each="oneDay: ${oneMonth.trainings}" th:object="${oneDay}" id="oneDay">
-                    <td oncontextmenu="showMenu(this.id)" th:id="*{id}" th:text="*{training_hours} != '0'? *{training_hours} : ''" th:class="*{backcolor}"></td>
+                    <td th:id="*{id}" oncontextmenu="showMenu(this.id)" th:text="*{training_hours} != '0'? *{training_hours} : ''" th:class="@{{backcolor} hover(backcolor=*{backcolor})}"></td>
                 </th:block>
             </tr>
         </th:block>
@@ -46,21 +46,37 @@
     <!--/* contextmenu */-->
     <div id="contextmenu">
         <ul>
-            <li><button type="submit" name="update_button" onclick="" data-bs-toggle="modal" data-bs-target="#teacherUpdateDialog">講師の変更</button></li>
-            <li>menu2</li>
-            <li>menu3</li>
+            <li>
+                <button type="submit" id="editTeacherDialogButton" name="update_button" onclick="editTeacherDialog(1);" data-bs-toggle="modal" data-bs-target="#teacherUpdateDialog">講師の変更</button>
+            </li>
+            <li>
+                <button type="submit" id="editTrainingDateDialogButton" name="update_button" onclick="editTrainingDateDialog(1);" data-bs-toggle="modal" data-bs-target="#trainingDateUpdateDialog">授業日の変更</button>
+            </li>
+            <li>
+                <button type="submit" id="swapTrainingDateDialogButton" name="update_button" onclick="swapTrainingDateDialog(1);" data-bs-toggle="modal" data-bs-target="#trainingDateSwappingDialog">授業日の入れ替え</button>
+            </li>
+            <li>
+                <button type="submit" id="editMemoDialogButton" name="update_button" onclick="editMemoDialog(1);" data-bs-toggle="modal" data-bs-target="#memoUpdateDialog">メモの変更</button>
+            </li>
+            <li>
+                <button type="submit" id="editTrainingHoursDialogButton" name="update_button" onclick="editTrainingHoursDialog(1);" data-bs-toggle="modal" data-bs-target="#trainingHoursUpdateDialog">授業時間の変更</button>
+            </li>
         </ul>
     </div>
 
+<!--講師の変更ダイアログ-->
     <div id="teacherUpdateDialog" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="/training/timetable/{trainingId}/editteacher" id="editTeacher" th:method="post">
+                <form th:action="@{/training/timetable/{trainingId}/edit_teacher(trainingId=${id})}" id="editTeacher" th:method="post">
                     <div class="modal-header">
-                        <h2>講師変更</h2>
+                        <h5 id="editTeacherDialogTitle">講師変更</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body">
-                        <input id="update_TrainingScheduleId" name="trainingScheduleId" value="0" hidden>
+                        <input id="updateTeacher_TrainingScheduleId" name="trainingScheduleId" value="0" hidden>
                         <label for="update_teacher">講師名</label>
                             <select class="form-select" id="update_teacher" name="teacherId">
                                 <option value="0"></option>
@@ -78,6 +94,111 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <!--授業日の変更ダイアログ-->
+    <div id="trainingDateUpdateDialog" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/training/timetable/{trainingId}/edit_date(trainingId=${id})}" id="editDate" th:method="post">
+                    <div class="modal-header">
+                        <h5 id="editTrainingDateDialogTitle">授業日変更</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="updateDate_TrainingScheduleId" name="trainingScheduleId" value="0" hidden>
+                        <label for="update_date">授業日</label>
+                        <input type="date" class="form-select" id="update_date" name="trainingDate" th:min="${timetable_firstDay}" th:max="${timetable_lastDay}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">更新</button>
+                        <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--授業日の入れ替えダイアログ-->
+    <div id="trainingDateSwappingDialog" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/training/timetable/{trainingId}/swap_date(trainingId=${id})}" id="swapDate" th:method="post">
+                    <div class="modal-header">
+                        <h5 id="swapTrainingDateDialogTitle">授業日入れ替え</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="swapDate_TrainingScheduleId" name="trainingScheduleId" value="0" hidden>
+                        <label for="swap_date">授業日</label>
+                        <input type="date" class="form-select" id="swap_date" name="trainingDate" th:min="${timetable_firstDay}" th:max="${timetable_lastDay}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">更新</button>
+                        <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--メモの変更ダイアログ-->
+    <div id="memoUpdateDialog" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/training/timetable/{trainingId}/edit_memo(trainingId=${id})}" id="editMemo" th:method="post">
+                    <div class="modal-header">
+                        <h5 id="editMemoDialogTitle">メモの変更</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="updateMemo_TrainingScheduleId" name="trainingScheduleId" value="0" hidden>
+                        <label for="update_memo">メモ</label>
+                        <input type="text" id="update_memo" name="memo">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">更新</button>
+                        <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--授業時間の変更ダイアログ-->
+    <div id="trainingHoursUpdateDialog" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/training/timetable/{trainingId}/edit_training_hours(trainingId=${id})}" id="editTrainingHours" th:method="post">
+                    <div class="modal-header">
+                        <h5 id="editTrainingHoursDialogTitle">授業時間の変更</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="updateTrainingHours_TrainingScheduleId" name="trainingScheduleId" value="0" hidden>
+                        <label for="update_trainingHours">授業時間</label>
+                        <input type="number" id="update_trainingHours" name="trainingHours" placeholder="00" maxlength="2" min="00" max="24">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">更新</button>
+                        <button type="reset" data-bs-dismiss="modal" class="btn btn-secondary">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--ツールチップ要素-->
+    <div class="tooltip_background" id="tooltip_background" hidden="hidden">
+        <p id="tooltip" class="tooltip">sample</p>
     </div>
 </body>
 </html>
