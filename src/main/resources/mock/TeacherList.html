@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<link rel="stylesheet" href="init.css">
+
+	<title>講師割当アプリケーション[講師一覧]</title>
+</head>
+<body>
+	<div class="list">
+		<br>
+		<h2>講師一覧</h2>
+
+		<div class="row">
+			<div class="col-md">
+
+				<table class="table table-striped table-hover">
+					<thead class="thead-dark">
+						<tr>
+							<th colspan="2" scope="col">講師名</th>
+							<th>
+								<button type="submit" id="update_button" class="btn btn-primary btn-sm" onclick="location.href='./TeacherInfo.html'">新規作成</button>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>00001</td>
+							<td><a href= "TeacherSchedule.html">テスト　太郎</a></td>
+							<td>
+								<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="location.href='./TeacherInfo.html'">編集</button>
+								<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="confirm('削除しますか？');">削除</button>
+							</td>
+						<tr>
+							<td>00002</td>
+							<td><a href= "TeacherSchedule.html">テスト　次郎</a></td>
+							<td>
+								<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="location.href='./TeacherInfo.html'">編集</button>
+								<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="confirm('削除しますか？');">削除</button>
+							</td>
+						</tr>
+						<tr>
+							<td>00003</td>
+							<td><a href= "TeacherSchedule.html">テスト　三郎</a></td>
+							<td>
+								<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="location.href='./TeacherInfo.html'">編集</button>
+								<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="confirm('削除しますか？');">削除</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- Navbar -->
+	<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+		<form class="container-fluid justify-content-start">
+			<button class="btn btn-sm btn btn-outline-light" type="button" onclick="location.href='./TrainingList.html'">訓練一覧へ</button>
+		</form>
+	</nav>
+
+<!-- Optional JavaScript; choose one of the two! -->
+
+	<!-- Option 1: Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+	<!-- Option 2: Separate Popper and Bootstrap JS -->
+	<!--
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+	-->
+</body>
+</html>

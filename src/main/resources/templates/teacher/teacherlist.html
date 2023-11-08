@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head th:replace="common/head :: head_fragment(title = '講師割当アプリケーション [講師一覧]', scripts = ~{::script}, links = ~{::link})"></head>
+<body>
+<div class="container">
+    <br>
+    <h2>講師一覧</h2>
+    <div class="float-end">
+        <a th:href="@{/teacher/add}" class="btn btn-primary">新規登録</a>
+    </div>
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>氏名</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="teacher : ${teacherlist}"  th:object="${teacher}">
+            <td th:text="*{id}" hidden></td>
+                        <td th:text="*{name}"></td>
+            <td>
+                <a th:href="@{/teacher/update/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">編集</a>
+                <a th:href="@{/teacher/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" onclick="return confirm_delete(this.parentElement.parentElement.cells[1].firstChild.data)">削除</a>
+            </td>
+        </tbody>
+    </table>
+</div>
+<br>
+<br>
+<!-- Navbar -->
+<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+    <a th:href="@{/training/list}" class="btn btn-sm btn btn-outline-light">訓練一覧へ</a>
+</nav>
+<script>
+    <!-- 削除確認メッセージ -->
+	function confirm_delete(data) {
+		return window.confirm(data + "を削除しますか？")
+    };
+</script>
+</body>
+</html>
