@@ -10,6 +10,7 @@ import jp.crossabilitys.work.TrainingList.service.TeacherService;
 import jp.crossabilitys.work.TrainingList.service.TrainingScheduleService;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class TrainingListController {
 //        List<TrainingInfo> traininglist = trainingService.searchAll();
         List<TrainingList> traininglist = trainingService.searchAllwithAssign();
         model.addAttribute("traininglist", traininglist);
+        model.addAttribute("nowDate", LocalDate.now());
         return "training/traininglist";
     }
 

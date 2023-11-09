@@ -19,7 +19,7 @@
             <th></th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
         <tr th:each="training : ${traininglist}"  th:object="${training}">
             <td th:text="*{id}" hidden></td>
             <!--/* <td th:text="*{trainingname}"></td> */-->
@@ -36,8 +36,11 @@
             <td th:text="*{#temporals.format(start_date, 'yyyy/MM/dd(eee)')} + ' ～ ' + *{#temporals.format(end_date, 'yyyy/MM/dd(eee)')}"></td>
             <td>
                 <!--/* <a th:href="@{/training/timetable/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">スケジュール</a> */-->
-                <a th:href="@{/training/update/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">編集</a>
-                <a th:href="@{/training/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" onclick="return confirm_delete(this.parentElement.parentElement.cells[1].firstChild.data)">削除</a>
+                <a th:href="@{/training/update/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm">編集</a>
+                <!--/* 訓練開始日以降の場合削除ボタン非表示 */-->
+                <th:block th:if="*{start_date} > ${nowDate}">
+                    <a th:href="@{/training/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" th:onclick="|return confirm_delete('__*{trainingname}__')|">削除</a>
+                </th:block>
             </td>
         </tbody>
     </table>

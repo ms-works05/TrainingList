@@ -15,12 +15,12 @@ public interface  TrainingListRepository extends JpaRepository<TrainingList,Long
     @Query(value="SELECT info.id, info.trainingname, info.start_date, info.end_date, " +
             "con.name2 AS consignorname, " +
             "IFNULL(days.count, 0) AS unassignedcount " +
-            "from traininginfo AS info " +
+            "FROM traininginfo AS info " +
             "LEFT JOIN consignor AS con ON info.consignor_id=con.id " +
             "LEFT JOIN  (" +
             "SELECT training_id,COUNT(*) AS count FROM trainingschedule " +
             "WHERE training_hours>0 AND teacher_id is NULL  GROUP BY training_id) AS days " +
             "ON info.id=days.training_id " +
-            "WHERE info.deleteflg=:deleteflg", nativeQuery = true)
+            "WHERE info.end_date >= CURRENT_DATE AND info.deleteflg=:deleteflg", nativeQuery = true)
     List<TrainingList> searchAllwithAssign(boolean deleteflg);
 }
