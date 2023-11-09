@@ -322,11 +322,14 @@ public class TrainingListController {
             if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == null) {
                 // 訓練日で講師割当がない場合、背景色「講師登録なし」設定
                 dailyTraining.setBackcolor(setBackColorCell(9));
-            }else if(holidays.isHoliday(oneDay.getTraining_date())){
+            } else if(holidays.isHoliday(oneDay.getTraining_date())){
                 // 祝日
                 dailyTraining.setBackcolor(setBackColorCell(8));
-            }else {
+            } else {
                 dailyTraining.setBackcolor(setBackColorCell(oneDay.getTraining_date().getDayOfWeek().getValue()));
+                if (oneDay.getTraining_hours() == 0 && oneDay.getTraining_date().getDayOfWeek().getValue() <= 5) {
+                    dailyTraining.setBackcolor(setBackColorCell(10));
+                }
             }
             dailyTrainings.add(dailyTraining);
 
@@ -388,6 +391,8 @@ public class TrainingListController {
                 return "nholiday";
             case 9:     // 講師登録なし
                 return "nodata";
+            case 10:     // 平日かつ授業時間0
+                return "sHoliday";
             default:
                 return "";
         }

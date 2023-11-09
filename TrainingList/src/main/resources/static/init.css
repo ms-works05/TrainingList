@@ -9,6 +9,7 @@ tr.row_data{
 	font-size: x-small;
 	text-align:center;
 }
+
 /* 曜日セル */
 td.dow{
  	height: 10px;
@@ -27,6 +28,9 @@ td.nholiday{
 td.nodata{
 	background-color: #ff0000;
 }
+td.sHoliday{
+    background-color: #00ffd1;
+}
 /* 対象外 */
 td.outofdata {
     background-color: #e2e7eb;
@@ -37,14 +41,24 @@ td.outofdata {
     position:fixed;
     left:0px;
     top:0px;
-    width:200px;
-    height:200px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
     border:1px solid #000;
-    background-color:#fff;
+    border-radius: 20px;
+    color: #333333;
+    background-color: rgba(255, 255, 255, 0.7);
 }
-#contextmenu li{
+#contextmenu ul{
+    list-style:none;
+    padding-left:0.5em;
+}
+
+li:hover {
     cursor:pointer;
+    color: #ffffff;
+    background-color: dimgray;
 }
+
 /* ----- スケジュール情報 ----- */
 #calendar td.holiday{
 	background-color: #dddddd;
@@ -55,20 +69,22 @@ td.outofdata {
 .inputhours{
     width:40px;
 }
-
+/* ツールチップ背景と枠 */
 .tooltip_background{
     z-index: 1;
     padding: 0.5em 0.5em;
-    border: solid 3px #000000;
+    border: solid 1px #000000;
     position: fixed;
 }
 
+/* ツールチップのデータ部分 */
 .tooltip{
     z-index: 3;
     position: relative;
     opacity: 1;
 }
 
+/*　ツールチップ背景の疑似要素 */
 .tooltip_background::after{
   content: "";
   position: absolute;
@@ -77,6 +93,11 @@ td.outofdata {
   height:100%;
   top: 0;
   left: 0;
-  background-color: white;
-  opacity: 0.7;
+  background-color: white; /* 背景の色 */
+  opacity: 0.7; /* 0.0 ~ 1.0　小さくなるほど透明になる */
+}
+
+.hover:hover {
+    outline: 1px solid #000;
+    outline-offset: -1px;
 }
