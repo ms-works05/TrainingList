@@ -4,7 +4,7 @@ import jp.crossabilitys.work.TrainingList.Entity.Consignor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * 委託元 Repository
+ * 種別(委託元) Repository
  */
 public interface ConsignorRepository extends JpaRepository<Consignor, Long> {
 }

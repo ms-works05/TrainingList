@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * 委託元 Entity
+ * 種別(委託元) Entity
  */
 @Entity
 @Data
@@ -24,7 +24,6 @@ public class Consignor extends CommonEntity {
     @Size(max = 50)
     private String name2;            // 名称2
 
-    @NotBlank
-    private int consigntype;        // タイプ
+//    private int consigntype;        // タイプ
 
 }
