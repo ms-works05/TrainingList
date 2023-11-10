@@ -10,9 +10,7 @@
 <form th:action="@{/schedule/edit}" th:object="${schedulelist}" th:method="post">
     <nav class="navbar fixed-top bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand">
-                <h5><span th:text="${trainingname}"></span></h5>
-            </a>
+            <h5><span th:text="${trainingname}"></span></h5>
             <div class="text-end">
                 <input type="submit" value="　更新　" class="btn btn-primary btn-block" />
                 <input type="hidden" th:field="*{training_id}" />
@@ -30,7 +28,7 @@
             <th>備考</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
         <tr th:each="row, st : *{scheduleDataList}">
             <td hidden>
                 <input type="hidden" th:field="*{scheduleDataList[__${st.index}__].id}">
@@ -66,7 +64,7 @@
 <br>
 <!-- Navbar -->
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-    <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light btn-sm">訓練一覧へ</a>
+    <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light btn-sm me-2">訓練一覧へ</a>
     <a th:href="@{/training/timetable/{id}(id=${schedulelist.training_id})}" class="btn btn-sm btn-outline-light">訓練時間表へ</a>
 </nav>
 </body>

@@ -90,7 +90,7 @@ public class TeacherController {
      */
     @GetMapping("/teacher/delete/{teacherId}")
     public String deleteTeacherInfo(Model model, @PathVariable("teacherId") Long id){
-        // 訓練情報の登録(削除フラグ=true)
+        // 講師情報の登録(削除フラグ=true)
         teacherService.deleteTeacher(id);
 
         return "redirect:/teacher/list";

@@ -3,7 +3,7 @@
 
 <head th:replace="common/head :: head_fragment(title = '講師割当アプリケーション [講師一覧]', scripts = ~{::script}, links = ~{::link})"></head>
 <body>
-<div class="container">
+<div class="container col-6">
     <br>
     <h2>講師一覧</h2>
     <div class="float-end">
@@ -16,13 +16,13 @@
             <th></th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
         <tr th:each="teacher : ${teacherlist}"  th:object="${teacher}">
             <td th:text="*{id}" hidden></td>
                         <td th:text="*{name}"></td>
-            <td>
-                <a th:href="@{/teacher/update/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm">編集</a>
-                <a th:href="@{/teacher/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" onclick="return confirm_delete(this.parentElement.parentElement.cells[1].firstChild.data)">削除</a>
+            <td class="text-end">
+                <a th:href="@{/teacher/update/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm">編集</a>
+                <a th:href="@{/teacher/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" th:onclick="|return confirm_delete('__*{name}__')|">削除</a>
             </td>
         </tbody>
     </table>
