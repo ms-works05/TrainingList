@@ -199,8 +199,8 @@ public class TrainingListController {
 
     /**
      * timetableから講師の変更
-     * @param trainingScheduleId trainingScheduleId
-     * @param teacherId teacherId
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param teacherId teacherId 講師のID
      * @return 訓練時間表画面
      */
     @RequestMapping(value = "/training/timetable/{trainingId}/edit_teacher",method = RequestMethod.POST)
@@ -213,6 +213,13 @@ public class TrainingListController {
         return "redirect:/training/timetable/" + id;
     }
 
+    /**
+     * timetableから授業日の変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingDate 授業日
+     * @return 訓練時間表画面
+     */
     @RequestMapping(value = "/training/timetable/{trainingId}/edit_date",method = RequestMethod.POST)
     public String editDate(@PathVariable("trainingId") Long id,
                               @RequestParam("trainingScheduleId")Long trainingScheduleId,
@@ -223,6 +230,13 @@ public class TrainingListController {
         return "redirect:/training/timetable/" + id;
     }
 
+    /**
+     * timetableから授業日の入れ替え
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingDate 授業日
+     * @return 訓練時間表画面
+     */
     @RequestMapping(value = "/training/timetable/{trainingId}/swap_date",method = RequestMethod.POST)
     public String swapDate(@PathVariable("trainingId") Long id,
                               @RequestParam("trainingScheduleId")Long trainingScheduleId,
@@ -233,6 +247,13 @@ public class TrainingListController {
         return "redirect:/training/timetable/" + id;
     }
 
+    /**
+     * timetableからメモの変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param memo メモ
+     * @return 訓練時間表画面
+     */
     @RequestMapping(value = "/training/timetable/{trainingId}/edit_memo",method = RequestMethod.POST)
     public String editTeacher(@PathVariable("trainingId") Long id,
                               @RequestParam("trainingScheduleId")Long trainingScheduleId,
@@ -243,6 +264,13 @@ public class TrainingListController {
         return "redirect:/training/timetable/" + id;
     }
 
+    /**
+     * timetableから授業時間の変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingHours 授業時間
+     * @return 訓練時間表画面
+     */
     @RequestMapping(value = "/training/timetable/{trainingId}/edit_training_hours",method = RequestMethod.POST)
     public String editTrainingHours(@PathVariable("trainingId") Long id,
                               @RequestParam("trainingScheduleId")Long trainingScheduleId,

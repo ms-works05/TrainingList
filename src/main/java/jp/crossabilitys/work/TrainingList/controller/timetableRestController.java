@@ -27,6 +27,12 @@ public class timetableRestController {
     @Autowired
     private TeacherService teacherService;
 
+    /**
+     * 日毎の訓練情報取得
+     * @param model Model
+     * @param scheduleId 訓練情報のID
+     * @return 訓練情報
+     */
     @RequestMapping(value = "/get_training_schedule",method = RequestMethod.POST)
     public List<Object> editTeacherDialog(Model model,
                                   @RequestParam("scheduleId") long scheduleId
