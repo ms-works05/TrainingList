@@ -8,7 +8,7 @@ import jp.crossabilitys.work.TrainingList.service.TeacherService;
 import jp.crossabilitys.work.TrainingList.service.TrainingScheduleService;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
 
-import java.util.Locale;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,12 +141,20 @@ public class TrainingListController {
 
         // 対象の訓練情報取得
         TrainingInfo targetData = trainingService.findById(id);
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        //最初の訓練日と最後の訓練日を取得
+        List<LocalDate> firstAndLastDate = scheduleService.findFirstAndLastTrainingDate(id);
+
+
 
         // 表示用データ設定
         model.addAttribute("id", id);
         model.addAttribute("trainingname", targetData.getTrainingname());
         model.addAttribute("timetable", setTimeTable(targetData));
-
+        model.addAttribute("timetable_firstDay",firstAndLastDate.get(0));
+        model.addAttribute("timetable_lastDay",firstAndLastDate.get(1));
+        model.addAttribute("teacherlist",teacherlist);
         return "training/timetable";
     }
     /**
@@ -187,6 +195,90 @@ public class TrainingListController {
         scheduleService.updateAll(Request);
 
         return  "redirect:/training/timetable/"+ Request.getTraining_id().toString();
+    }
+
+    /**
+     * timetableから講師の変更
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param teacherId teacherId 講師のID
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_teacher",method = RequestMethod.POST)
+    public String editTeacher(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam("teacherId") Long teacherId) {
+
+        scheduleService.updateTeacherInTimetable(trainingScheduleId,teacherId);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableから授業日の変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingDate 授業日
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_date",method = RequestMethod.POST)
+    public String editDate(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam(value="trainingDate", defaultValue = "1970-01-01") LocalDate trainingDate) {
+
+        scheduleService.updateDateInTimetable(trainingScheduleId,trainingDate);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableから授業日の入れ替え
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingDate 授業日
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/swap_date",method = RequestMethod.POST)
+    public String swapDate(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam(value="trainingDate", defaultValue = "1970-01-01") LocalDate trainingDate) {
+
+        scheduleService.swapDateInTimetable(trainingScheduleId,trainingDate);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableからメモの変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param memo メモ
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_memo",method = RequestMethod.POST)
+    public String editTeacher(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam("memo") String memo) {
+
+        scheduleService.updateMemoInTimetable(trainingScheduleId, memo);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableから授業時間の変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingHours 授業時間
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_training_hours",method = RequestMethod.POST)
+    public String editTrainingHours(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam("trainingHours") String trainingHours) {
+
+        scheduleService.updateTrainingHoursInTimetable(trainingScheduleId, trainingHours);
+
+        return "redirect:/training/timetable/" + id;
     }
 
     /**
@@ -258,11 +350,14 @@ public class TrainingListController {
             if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == null) {
                 // 訓練日で講師割当がない場合、背景色「講師登録なし」設定
                 dailyTraining.setBackcolor(setBackColorCell(9));
-            }else if(holidays.isHoliday(oneDay.getTraining_date())){
+            } else if(holidays.isHoliday(oneDay.getTraining_date())){
                 // 祝日
                 dailyTraining.setBackcolor(setBackColorCell(8));
-            }else {
+            } else {
                 dailyTraining.setBackcolor(setBackColorCell(oneDay.getTraining_date().getDayOfWeek().getValue()));
+                if (oneDay.getTraining_hours() == 0 && oneDay.getTraining_date().getDayOfWeek().getValue() <= 5) {
+                    dailyTraining.setBackcolor(setBackColorCell(10));
+                }
             }
             dailyTrainings.add(dailyTraining);
 
@@ -324,6 +419,8 @@ public class TrainingListController {
                 return "nholiday";
             case 9:     // 講師登録なし
                 return "nodata";
+            case 10:     // 平日かつ授業時間0
+                return "sHoliday";
             default:
                 return "";
         }
