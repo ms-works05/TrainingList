@@ -1,10 +1,11 @@
 package jp.crossabilitys.work.TrainingList.repository;
 
-import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 
 /**
  * 訓練情報 Repository

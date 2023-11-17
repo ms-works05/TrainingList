@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head th:replace="common/head :: head_fragment(title = '講師割当アプリケーション [種別]', scripts = ~{::script}, links = ~{::link})"></head>
+<body>
+<div class="container col-6">
+  <br>
+  <h2>種別</h2>
+  <br>
+  <br>
+  <form th:action="@{/consignor/create}" th:object="${consignorRequest}" th:method="post">
+    <div class="input-group mb-3" hidden>
+      <span class="input-group-text">ID</span>
+      <input type="text" class="form-control" th:field="*{id}"/>
+    </div>
+    <div class="text-danger" th:if="${#fields.hasErrors('name1')}" th:errors="*{name1}"></div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">名称1</span>
+      <input type="text" class="form-control" th:field="*{name1}" th:errorclass="is-invalid"/>
+    </div>
+    <div class="text-danger" th:if="${#fields.hasErrors('name2')}" th:errors="*{name2}"></div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">名称2</span>
+      <input type="text" class="form-control" th:field="*{name2}" th:errorclass="is-invalid"/>
+    </div>
+
+    <br>
+    <div class="text-center">
+      <input type="submit" value="　登録　" class="btn btn-primary btn-block">
+      <a href="/consignor/list" class="btn btn-outline-primary btn-block">キャンセル</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>

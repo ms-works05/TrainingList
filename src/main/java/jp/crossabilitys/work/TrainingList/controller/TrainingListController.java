@@ -1,20 +1,22 @@
 package jp.crossabilitys.work.TrainingList.controller;
 
+import jp.crossabilitys.work.TrainingList.Entity.Consignor;
 import jp.crossabilitys.work.TrainingList.Entity.TeacherInfo;
 import jp.crossabilitys.work.TrainingList.dto.*;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingInfo;
 import jp.crossabilitys.work.TrainingList.Entity.TrainingSchedule;
+import jp.crossabilitys.work.TrainingList.service.ConsignorService;
 import jp.crossabilitys.work.TrainingList.service.TeacherService;
 import jp.crossabilitys.work.TrainingList.service.TrainingScheduleService;
 import jp.crossabilitys.work.TrainingList.service.TrainingService;
 
-import java.util.Locale;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import one.cafebabe.businesscalendar4j.BusinessCalendar;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,22 +24,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequiredArgsConstructor
 public class TrainingListController {
     /**
      * 訓練情報 Service
      */
-    @Autowired
-    private TrainingService trainingService;
+    private final TrainingService trainingService;
     /**
      * 訓練スケジュール Service
      */
-    @Autowired
-    private TrainingScheduleService scheduleService;
+    private final TrainingScheduleService scheduleService;
     /**
      * 講師情報 Service
      */
-    @Autowired
-    private TeacherService teacherService;
+    private final TeacherService teacherService;
+    /**
+     * 委託元 Service
+     */
+    private final ConsignorService consignorService;
 
     /**
      * 訓練情報一覧画面表示
@@ -46,8 +50,10 @@ public class TrainingListController {
      */
     @GetMapping("/training/list")
     public String displayTrainingList(Model model) {
-        List<TrainingInfo> traininglist = trainingService.searchAll();
+//        List<TrainingInfo> traininglist = trainingService.searchAll();
+        List<TrainingList> traininglist = trainingService.searchAllwithAssign();
         model.addAttribute("traininglist", traininglist);
+        model.addAttribute("nowDate", LocalDate.now());
         return "training/traininglist";
     }
 
@@ -58,6 +64,14 @@ public class TrainingListController {
      */
     @GetMapping("/training/add")
     public String displayTrainingInfo(Model model) {
+        // 委託元データ設定
+        List<Consignor> consignorList = consignorService.searchAll();
+        model.addAttribute("consignorlist",consignorList);
+
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        model.addAttribute("teacherlist",teacherlist);
+
         model.addAttribute("trainingRequest", new TrainingRequest());
         return "training/traininginfo";
     }
@@ -109,9 +123,18 @@ public class TrainingListController {
         request.setEnd_time(entity.getEnd_time());
         request.setTraining_hours(entity.getTraining_hours());
         request.setTotaltraining_hours(entity.getTotaltraining_hours());
+        request.setConsignor_id(entity.getConsignor_id());
         request.setDeleteflg(entity.isDeleteflg());
 
         model.addAttribute("trainingRequest", request);
+
+        // 委託元データ設定
+        List<Consignor> consignorList = consignorService.searchAll();
+        model.addAttribute("consignorlist",consignorList);
+
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        model.addAttribute("teacherlist",teacherlist);
 
         return "training/traininginfo";
     }
@@ -141,57 +164,159 @@ public class TrainingListController {
 
         // 対象の訓練情報取得
         TrainingInfo targetData = trainingService.findById(id);
+        // 講師情報取得
+        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        //最初の訓練日と最後の訓練日を取得
+        List<LocalDate> firstAndLastDate = scheduleService.findFirstAndLastTrainingDate(id);
 
         // 表示用データ設定
         model.addAttribute("id", id);
         model.addAttribute("trainingname", targetData.getTrainingname());
         model.addAttribute("timetable", setTimeTable(targetData));
-
+        model.addAttribute("timetable_firstDay",firstAndLastDate.get(0));
+        model.addAttribute("timetable_lastDay",firstAndLastDate.get(1));
+        model.addAttribute("teacherlist",teacherlist);
         return "training/timetable";
     }
+
     /**
-     * 訓練時間表画面表示
+     * 訓練スケジュール編集画面表示
      * @param model Model
      * @param id 表示する訓練ID
-     * @return 訓練時間表画面
+     * @return 訓練スケジュール編集画面
      */
-    @GetMapping("/training/editschedule/{trainingId}")
-    public String displayEditSchedule(Model model, @PathVariable("trainingId") Long id){
+    @GetMapping({"/training/editschedule","/training/editschedule/{trainingId}"})
+    public String displayEditSchedule(Model model, @PathVariable(name = "trainingId", required = false) Long id){
+        ScheduleData scheduleList = new ScheduleData();
+        List<TeacherInfo> teacherlist = new ArrayList<>();
 
-        // 対象の訓練情報取得
-        TrainingInfo targetData = trainingService.findById(id);
-        ScheduleData scheduleList = scheduleService.searchSchedule(id);
+        // 訓練情報取得
+        List<TrainingList> traininglist = trainingService.searchAllwithAssign();
+        model.addAttribute("traininglist", traininglist);
 
-        // 講師情報取得
-        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        if (id != null) {
+            // 対象の訓練情報取得
+            TrainingInfo targetData = trainingService.findById(id);
+            scheduleList = scheduleService.searchSchedule(id);
+
+            // 講師情報取得
+            teacherlist = teacherService.searchAll();
+        }
 
         // 表示用データ設定
-        model.addAttribute("training_id", id);
-        model.addAttribute("trainingname", targetData.getTrainingname());
-//        model.addAttribute("trainingData", targetData);
         model.addAttribute("schedulelist", scheduleList);
         model.addAttribute("teacherlist",teacherlist);
 
         return "training/editschedule";
     }
+    /**
+     * 訓練スケジュール編集画面表示
+     * @param model Model
+     * @param Request ScheduleData
+     * @return 訓練スケジュール編集画面
+     */
+    @RequestMapping(value = "/schedule/disp", method = RequestMethod.POST)
+    public String displayScheduleList(Model model, @ModelAttribute ScheduleData Request){
 
+        return  "redirect:/training/editschedule/"+ Request.getTraining_id().toString();
+    }
     /**
      * スケジュール登録
      * @param model Model
-     * @param Request
-     * @param result 入力チェックエラー情報
-     * @param redirectAttributes
-     * @return
+     * @param Request ScheduleData
+     * @return 訓練スケジュール編集画面
      */
     @RequestMapping(value = "/schedule/edit", method = RequestMethod.POST)
-    public String editSchedule(Model model, @ModelAttribute ScheduleData Request, BindingResult result,
-                               RedirectAttributes redirectAttributes){
+    public String editSchedule(Model model, @ModelAttribute ScheduleData Request){
 
         // 訓練スケジュール更新
         scheduleService.updateAll(Request);
 
-        return "redirect:/training/timetable/102"; // ←仮
-//        return String.format("redirect:/training/timetable/%d", "training_idを渡したい");
+        return  "redirect:/training/editschedule/"+ Request.getTraining_id().toString();
+    }
+
+    /**
+     * timetableから講師の変更
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param teacherId teacherId 講師のID
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_teacher",method = RequestMethod.POST)
+    public String editTeacher(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam("teacherId") Long teacherId) {
+
+        scheduleService.updateTeacherInTimetable(trainingScheduleId,teacherId);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableから授業日の変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingDate 授業日
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_date",method = RequestMethod.POST)
+    public String editDate(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam(value="trainingDate", defaultValue = "1970-01-01") LocalDate trainingDate) {
+
+        scheduleService.updateDateInTimetable(trainingScheduleId,trainingDate);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableから授業日の入れ替え
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingDate 授業日
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/swap_date",method = RequestMethod.POST)
+    public String swapDate(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam(value="trainingDate", defaultValue = "1970-01-01") LocalDate trainingDate) {
+
+        scheduleService.swapDateInTimetable(trainingScheduleId,trainingDate);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableからメモの変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param memo メモ
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_memo",method = RequestMethod.POST)
+    public String editTeacher(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam("memo") String memo) {
+
+        scheduleService.updateMemoInTimetable(trainingScheduleId, memo);
+
+        return "redirect:/training/timetable/" + id;
+    }
+
+    /**
+     * timetableから授業時間の変更
+     * @param id 訓練のID
+     * @param trainingScheduleId 日毎の訓練情報のID
+     * @param trainingHours 授業時間
+     * @return 訓練時間表画面
+     */
+    @RequestMapping(value = "/training/timetable/{trainingId}/edit_training_hours",method = RequestMethod.POST)
+    public String editTrainingHours(@PathVariable("trainingId") Long id,
+                              @RequestParam("trainingScheduleId")Long trainingScheduleId,
+                              @RequestParam("trainingHours") String trainingHours) {
+
+        scheduleService.updateTrainingHoursInTimetable(trainingScheduleId, trainingHours);
+
+        return "redirect:/training/timetable/" + id;
     }
 
     /**
@@ -200,7 +325,6 @@ public class TrainingListController {
      * @return 訓練時間表表示用データ
      */
     private List<MonthlyTraining> setTimeTable(TrainingInfo targetData){
-        final var locale = Locale.getDefault();
         final List<MonthlyTraining> timeTable = new ArrayList<>();
         List<DailyTraining> dailyTrainings = new ArrayList<>();
         MonthlyTraining monthlyTraining = new MonthlyTraining();
@@ -258,16 +382,20 @@ public class TrainingListController {
             }
             // 1日の訓練データ作成
             final DailyTraining dailyTraining = new DailyTraining();
+            dailyTraining.setId(oneDay.getId());
             dailyTraining.setTraining_date(oneDay.getTraining_date());
             dailyTraining.setTraining_hours(oneDay.getTraining_hours());
             if (oneDay.getTraining_hours() > 0 && oneDay.getTeacher_id() == null) {
                 // 訓練日で講師割当がない場合、背景色「講師登録なし」設定
                 dailyTraining.setBackcolor(setBackColorCell(9));
-            }else if(holidays.isHoliday(oneDay.getTraining_date())){
+            } else if(holidays.isHoliday(oneDay.getTraining_date())){
                 // 祝日
                 dailyTraining.setBackcolor(setBackColorCell(8));
-            }else {
+            } else {
                 dailyTraining.setBackcolor(setBackColorCell(oneDay.getTraining_date().getDayOfWeek().getValue()));
+                if (oneDay.getTraining_hours() == 0 && oneDay.getTraining_date().getDayOfWeek().getValue() <= 5) {
+                    dailyTraining.setBackcolor(setBackColorCell(10));
+                }
             }
             dailyTrainings.add(dailyTraining);
 
@@ -329,6 +457,8 @@ public class TrainingListController {
                 return "nholiday";
             case 9:     // 講師登録なし
                 return "nodata";
+            case 10:     // 平日かつ授業時間0
+                return "sHoliday";
             default:
                 return "";
         }

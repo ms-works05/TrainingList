@@ -3,7 +3,7 @@ package jp.crossabilitys.work.TrainingList.service;
 import jp.crossabilitys.work.TrainingList.Entity.TeacherInfo;
 import jp.crossabilitys.work.TrainingList.dto.TeacherRequest;
 import jp.crossabilitys.work.TrainingList.repository.TeacherRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class TeacherService {
     /**
      *  講師情報 Repository
      */
-    @Autowired
-    private TeacherRepository teacherRepository;
+    private final TeacherRepository teacherRepository;
     /**
      * 講師情報 全検索
      * @return 検索結果

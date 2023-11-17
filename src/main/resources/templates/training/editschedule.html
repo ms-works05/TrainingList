@@ -3,48 +3,69 @@
 
 <head th:replace="common/head :: head_fragment(title = '講師割当アプリケーション [スケジュール登録]', scripts = ~{::script}, links = ~{::link})"></head>
 <body>
-<div class="container">
-<br>
-<br>
-<br>
-<form th:action="@{/schedule/edit}" th:object="${schedulelist}" th:method="post">
-    <nav class="navbar fixed-top bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand">
-                <h5><span th:text="${trainingname}"></span></h5>
-            </a>
-            <div class="text-end">
-                <input type="submit" value="　更新　" class="btn btn-primary btn-block" />
-                <input type="hidden" th:field="${training_id}" />
-                <!--/* <a th:href="@{/training/timetable/{id}(id=${training_id})}" class="btn btn-outline-primary btn-block">キャンセル</a> */-->
+<nav class="navbar sticky-top bg-body-tertiary">
+    <div class="container">
+        <div class="row">
+            <div class="col-10 w-auto">
+                <form th:action="@{/schedule/disp}" th:object="${schedulelist}" th:method="post">
+                    <div class="input-group">
+                        <span class="input-group-text">訓練名</span>
+                        <select id="select_id" class="form-select" th:field="${schedulelist.training_id}" onchange="this.form.submit()">
+                            <option th:value="0"></option>
+                            <option th:each="item : ${traininglist}" th:value="${item.id}" th:text="${item.trainingname}"></option>
+                        </select>
+                    </div>
+                </form>
             </div>
         </div>
-    </nav>
 
-    <table class="table table-striped table-hover">
-        <thead class="thead-dark">
+    </div>
+</nav>
+
+    <br>
+<div class="container">
+    <form th:action="@{/schedule/edit}" th:object="${schedulelist}" th:method="post">
+<!--        <nav class="navbar sticky-top bg-white">-->
+<!--            &lt;!&ndash;    <div class="container-fluid">&ndash;&gt;-->
+<!--            <div class="text-end">-->
+<!--                <input type="submit" value="　更新　" class="btn btn-success btn-block" />-->
+<!--                <input type="hidden" th:field="*{training_id}" />-->
+<!--                &lt;!&ndash;/* <a th:href="@{/training/timetable/{id}(id=${training_id})}" class="btn btn-outline-primary btn-block">キャンセル</a> */&ndash;&gt;-->
+<!--            </div>-->
+<!--            &lt;!&ndash;    </div>&ndash;&gt;-->
+<!--        </nav>-->
+        <table class="table table-striped table-hover">
+        <thead class="thead-dark sticky-top">
+        <tr>
+            <td colspan="4">
+                <div class="text-end">
+                    <input type="submit" value="　更新　" class="btn btn-success btn-block" />
+                    <input type="hidden" th:field="*{training_id}" />
+                </div>
+            </td>
+        </tr>
         <tr>
             <th>訓練日</th>
             <th>訓練時間</th>
             <th>講師</th>
-            <th>備考</th>
+            <th>メモ</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="row, st : *{scheduleDataList}">
+        <tbody class="table-group-divider">
+        <tr th:each="row, st : ${schedulelist.scheduleDataList}">
             <td hidden>
-                <input type="hidden" th:field="*{scheduleDataList[__${st.index}__].id}">
-                <input type="hidden" th:field="*{scheduleDataList[__${st.index}__].training_id}">
+                <input type="hidden" th:field="${schedulelist.scheduleDataList[__${st.index}__].id}">
+                <input type="hidden" th:field="${schedulelist.scheduleDataList[__${st.index}__].training_id}">
             </td>
             <td>
                 <label th:text="${#temporals.format(row.training_date, 'yyyy/MM/dd(eee)')}"></label>
-                <input type="hidden" th:field="*{scheduleDataList[__${st.index}__].training_date}">
+                <input type="hidden" th:field="${schedulelist.scheduleDataList[__${st.index}__].training_date}">
             </td>
             <td>
-                <input type="number" class="form-control" min="0" max="8"  th:field="*{scheduleDataList[__${st.index}__].training_hours}" />
+                <input type="number" class="form-control" min="0" max="8"  th:field="${schedulelist.scheduleDataList[__${st.index}__].training_hours}" />
             </td>
             <td>
-                <select class="form-select" th:field="*{scheduleDataList[__${st.index}__].teacher_id}">
+                <select class="form-select" th:field="${schedulelist.scheduleDataList[__${st.index}__].teacher_id}">
                     <option value="0"></option>
                     <option
                             th:each="teacher : ${teacherlist}"
@@ -55,7 +76,7 @@
                 </select>
             </td>
             <td>
-                <input type="text" class="form-control" th:field="*{scheduleDataList[__${st.index}__].memo}">
+                <input type="text" class="form-control" th:field="${schedulelist.scheduleDataList[__${st.index}__].memo}">
             </td>
         </tr>
         </tbody>
@@ -64,10 +85,10 @@
 </div>
 <br>
 <br>
-<!-- Navbar -->
+<!--/* Navbar */-->
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-    <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light btn-sm">訓練一覧へ</a>
-    <a th:href="@{/training/timetable/{id}(id=${training_id})}" class="btn btn-sm btn-outline-light">訓練時間表へ</a>
+    <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light btn-sm me-2">&nbsp;戻る&nbsp;</a>
+    <!--/* <a th:href="@{/training/timetable/{id}(id=${schedulelist.training_id})}" class="btn btn-sm btn-outline-light">訓練時間表へ</a> */-->
 </nav>
 </body>
 </html>
