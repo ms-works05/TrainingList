@@ -169,8 +169,6 @@ public class TrainingListController {
         //最初の訓練日と最後の訓練日を取得
         List<LocalDate> firstAndLastDate = scheduleService.findFirstAndLastTrainingDate(id);
 
-
-
         // 表示用データ設定
         model.addAttribute("id", id);
         model.addAttribute("trainingname", targetData.getTrainingname());
@@ -180,36 +178,53 @@ public class TrainingListController {
         model.addAttribute("teacherlist",teacherlist);
         return "training/timetable";
     }
+
     /**
-     * 訓練時間表画面表示
+     * 訓練スケジュール編集画面表示
      * @param model Model
      * @param id 表示する訓練ID
      * @return 訓練スケジュール編集画面
      */
-    @GetMapping("/training/editschedule/{trainingId}")
-    public String displayEditSchedule(Model model, @PathVariable("trainingId") Long id){
+    @GetMapping({"/training/editschedule","/training/editschedule/{trainingId}"})
+    public String displayEditSchedule(Model model, @PathVariable(name = "trainingId", required = false) Long id){
+        ScheduleData scheduleList = new ScheduleData();
+        List<TeacherInfo> teacherlist = new ArrayList<>();
 
-        // 対象の訓練情報取得
-        TrainingInfo targetData = trainingService.findById(id);
-        ScheduleData scheduleList = scheduleService.searchSchedule(id);
+        // 訓練情報取得
+        List<TrainingList> traininglist = trainingService.searchAllwithAssign();
+        model.addAttribute("traininglist", traininglist);
 
-        // 講師情報取得
-        List<TeacherInfo> teacherlist = teacherService.searchAll();
+        if (id != null) {
+            // 対象の訓練情報取得
+            TrainingInfo targetData = trainingService.findById(id);
+            scheduleList = scheduleService.searchSchedule(id);
+
+            // 講師情報取得
+            teacherlist = teacherService.searchAll();
+        }
 
         // 表示用データ設定
-//        model.addAttribute("training_id", id);
-        model.addAttribute("trainingname", targetData.getTrainingname());
         model.addAttribute("schedulelist", scheduleList);
         model.addAttribute("teacherlist",teacherlist);
 
         return "training/editschedule";
     }
+    /**
+     * 訓練スケジュール編集画面表示
+     * @param model Model
+     * @param Request ScheduleData
+     * @return 訓練スケジュール編集画面
+     */
+    @RequestMapping(value = "/schedule/disp", method = RequestMethod.POST)
+    public String displayScheduleList(Model model, @ModelAttribute ScheduleData Request){
 
+        return  "redirect:/training/editschedule/"+ Request.getTraining_id().toString();
+    }
     /**
      * スケジュール登録
      * @param model Model
-     * @param Request
-     * @return 訓練時間表画面
+     * @param Request ScheduleData
+     * @return 訓練スケジュール編集画面
      */
     @RequestMapping(value = "/schedule/edit", method = RequestMethod.POST)
     public String editSchedule(Model model, @ModelAttribute ScheduleData Request){
@@ -217,7 +232,7 @@ public class TrainingListController {
         // 訓練スケジュール更新
         scheduleService.updateAll(Request);
 
-        return  "redirect:/training/timetable/"+ Request.getTraining_id().toString();
+        return  "redirect:/training/editschedule/"+ Request.getTraining_id().toString();
     }
 
     /**

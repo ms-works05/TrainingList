@@ -10,31 +10,34 @@
         <a th:href="@{/teacher/add}" class="btn btn-primary">新規登録</a>
     </div>
     <table class="table table-striped table-hover">
-        <thead class="thead-dark">
+    <thead class="thead-dark">
         <tr>
             <th>氏名</th>
             <th></th>
         </tr>
-        </thead>
-        <tbody class="table-group-divider">
+    </thead>
+    <tbody class="table-group-divider">
         <tr th:each="teacher : ${teacherlist}"  th:object="${teacher}">
             <td th:text="*{id}" hidden></td>
-                        <td th:text="*{name}"></td>
+            <td th:text="*{name}"></td>
             <td class="text-end">
                 <a th:href="@{/teacher/update/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm">編集</a>
                 <a th:href="@{/teacher/delete/{id}(id=*{id})}" class="btn btn-outline-secondary btn-sm" th:onclick="|return confirm_delete('__*{name}__')|">削除</a>
             </td>
-        </tbody>
+        </tr>
+    </tbody>
     </table>
 </div>
 <br>
 <br>
-<!-- Navbar -->
+<!--/* Navbar */-->
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-    <a th:href="@{/training/list}" class="btn btn-sm btn btn-outline-light">訓練一覧へ</a>
+    <!--/* <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light">訓練一覧へ</a> */-->
+    <!--/* <a href="#" class="btn btn-outline-light" onclick="history.back(-1);return false;">&nbsp;戻る&nbsp;</a> */-->
+    <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light btn-sm me-2">&nbsp;戻る&nbsp;</a>
 </nav>
 <script>
-    <!-- 削除確認メッセージ -->
+    <!--/* 削除確認メッセージ */-->
 	function confirm_delete(data) {
 		return window.confirm(data + "を削除しますか？")
     };
