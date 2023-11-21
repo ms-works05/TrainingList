@@ -90,6 +90,15 @@ public class TrainingListController {
             // 入力チェックエラーの場合
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.trainingRequest", result);
             redirectAttributes.addFlashAttribute("trainingRequest", trainingRequest);
+
+            // 委託元データ設定
+            List<Consignor> consignorList = consignorService.searchAll();
+            model.addAttribute("consignorlist",consignorList);
+
+            // 講師情報取得
+            List<TeacherInfo> teacherlist = teacherService.searchAll();
+            model.addAttribute("teacherlist",teacherlist);
+
             // 訓練情報画面表示
             return "training/traininginfo";
         }
